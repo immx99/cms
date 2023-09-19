@@ -220,8 +220,11 @@ if ($chmod >= 2 || $_SESSION['jabatan'] == 'admin' || $_SESSION['jabatan'] == 'u
                     echo "<script type='text/javascript'>  alert('Barang sudah diinputkan, silakan hapus dahulu untuk merubah!');</script>";
               }
           else if(($chmod >= 2 || $_SESSION['jabatan'] == 'admin' || $_SESSION['jabatan'] == 'user'  )&&($jumlah > 0)){
-
-               $sql2 = "insert into $tabeldatabase (nota,kode,nama,biaya,satuan,jumlah,hargaakhir,biayaakhir) values( '$kode','$layanan','$nama','$biaya','$satuan','$jumlah','$hargaakhir','$biayaakhir')";
+              if ($nama!="Diskon") {
+                  $sql2 = "insert into $tabeldatabase (nota,kode,nama,biaya,satuan,jumlah,hargaakhir,biayaakhir) values( '$kode','$layanan','$nama','$biaya','$satuan','$jumlah','$hargaakhir','$biayaakhir')";
+              } else {
+                  $sql2 = "insert into $tabeldatabase (nota,kode,nama,satuan,jumlah,hargaakhir,biayaakhir) values( '$kode','$layanan','$nama','$satuan','$jumlah','$hargaakhir','$biayaakhir')";
+              }
                echo $sql2;
                $insertan = mysqli_query($conn, $sql2);
              }else{
@@ -472,7 +475,7 @@ if (win) {
                                                      var result = parseFloat(txtFirstNumberValue) * parseFloat(txtSecondNumberValue);
                                                      var result2= -1 * parseFloat(txtFirstNumberValue) * parseFloat(txtHargaAkhirValue)/100;
                                                      var nama = $("#layanan option:selected").attr("nama");
-                                                     alert("harga= " + result2);
+                                                     
                                                      if (!isNaN(result)) {
                                                     
                                                         document.getElementById('hargaakhir').value = result;
@@ -599,9 +602,17 @@ error_reporting(E_ALL ^ (E_NOTICE | E_WARNING));
                 <td><?php echo ++$no_urut;?></td>
                 <td><?php  echo mysqli_real_escape_string($conn,$fill['kode']); ?></td>
                 <td><?php  echo mysqli_real_escape_string($conn,$fill['nama']); ?></td>
-                <td><?php  echo mysqli_real_escape_string($conn,number_format($fill['biaya'], $decimal, $a_decimal, $thousand).',-'); ?></td>
-                <td><?php  echo mysqli_real_escape_string($conn,$fill['jumlah'].' '.$fill['satuan']); ?></td>
-                <td><?php  echo mysqli_real_escape_string($conn,number_format(($fill['jumlah']*$fill['biaya']), $decimal, $a_decimal, $thousand).',-'); ?></td>
+                <?php 
+                if (mysqli_real_escape_string($conn,$fill['nama'])!="Diskon") {
+                    echo '<td>' . mysqli_real_escape_string($conn,number_format($fill['biaya'], $decimal, $a_decimal, $thousand).',-') . '</td>';
+                    echo '<td>' . mysqli_real_escape_string($conn,$fill['jumlah'].' '.$fill['satuan']) . '</td>';
+                    echo '<td>' . mysqli_real_escape_string($conn,number_format(($fill['jumlah']*$fill['biaya']), $decimal, $a_decimal, $thousand).',-') . '</td>';
+                } else {
+                    echo '<td></td>';
+                    echo '<td>' . mysqli_real_escape_string($conn,$fill['jumlah'].' '.$fill['satuan']) . '</td>';
+                    echo '<td>' . mysqli_real_escape_string($conn,number_format($fill['hargaakhir'])) . '</td>';
+                }
+                ?>
                 <td>
                 <?php	if ($chmod >= 4 || $_SESSION['jabatan'] == 'admin' || $_SESSION['jabatan'] == 'user'  ) { ?>
                 <button type="button" class="btn btn-danger btn-xs" onclick="window.location.href='component/delete/delete_produk?get=<?php echo '1'.'&'; ?>barang=<?php echo $fill['kode'].'&'; ?>jumlah=<?php echo $fill['jumlah'].'&'; ?>kode=<?php echo $kode.'&'; ?>no=<?php echo $fill['no'].'&'; ?>forward=<?php echo $forward.'&';?>forwardpage=<?php echo "add_".$forwardpage.'&'; ?>chmod=<?php echo $chmod; ?>'">Hapus</button>
