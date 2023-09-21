@@ -115,7 +115,7 @@ if ($chmod >= 2 || $_SESSION['jabatan'] == 'admin') {
       <?php
     error_reporting(E_ALL ^ (E_NOTICE | E_WARNING));
 
-    $kode=$nama=$satuan=$satuan_eceran=$biaya_eceran=$jumlah=$harga_modal=$total_modal=$biaya="";
+    $kode=$nama=$satuan=$satuan_eceran=$harga_eceran=$jumlah=$jumlah_eceran=$jumlah_per_pack=$harga_modal=$total_modal=$biaya="";
     $no = $_GET["no"];
     $insert = '1';
 
@@ -134,12 +134,15 @@ if ($chmod >= 2 || $_SESSION['jabatan'] == 'admin') {
           $nama = $fill["nama"];
           $satuan = $fill["satuan"];
           $biaya = $fill["biaya"];
-          $satuan = $fill["satuan_eceran"];
-          $biaya = $fill["biaya_eceran"];
+          $satuan_eceran = $fill["satuan_eceran"];
+          $harga_eceran = $fill["harga_eceran"];
           $jumlah = $fill["jumlah"];
+          $jumlah_eceran = $fill["jumlah_eceran"];
+          $jumlah_per_pack = $fill["jumlah_per_pack"];
           $harga_modal = $fill["harga_modal"];
           $total_modal = $fill["total_modal"];
-                  $insert = '3';
+          $insert = '3';
+          // echo $satuan;
 
     }
     }
@@ -176,15 +179,18 @@ if ($chmod >= 2 || $_SESSION['jabatan'] == 'admin') {
            <div class="form-group col-md-6 col-xs-12" >
                   <label for="satuan" class="col-sm-3 control-label">Satuan:</label>
                   <div class="col-sm-9">
-                    <select class="form-control select2" style="width: 100%;" name="satuan" required>
+                    <select class="form-control select1" style="width: 100%;" name="satuan" required>
                       <option></option>
                     <?php
+                    
                     $sql=mysqli_query($conn,"select * from satuan");
                     while ($row=mysqli_fetch_assoc($sql)){
-                    if ($satuan==$row['nama'])
-                    echo "<option value='".$row['kode']."' selected='selected'>".$row['nama']."</option>";
-                    else
-                    echo "<option value='".$row['kode']."'>".$row['nama']."</option>";
+                        echo "satuan= " . $satuan;
+                        if ($satuan==$row['kode']) {
+                            echo "<option value='".$row['kode']."' selected>" . $row['nama'] . "</option>";
+                        } else {
+                            echo "<option value='".$row['kode']."'>".$row['nama']."</option>";
+                        }
                     }
                     ?>
                     </select>
@@ -209,20 +215,37 @@ if ($chmod >= 2 || $_SESSION['jabatan'] == 'admin') {
                   </div>
             </div>
         </div>
-
         <div class="row">
            <div class="form-group col-md-6 col-xs-12" >
-                  <label for="satuan" class="col-sm-3 control-label">Satuan Eceran:</label>
+                  <label for="jumlah_eceran" class="col-sm-3 control-label">Jumlah Eceran:</label>
                   <div class="col-sm-9">
-                    <select class="form-control select2" style="width: 100%;" name="satuan_eceran" required>
+                    <input type="text" class="form-control" id="jumlah_eceran" name="jumlah_eceran" value="<?php echo $jumlah_eceran; ?>" placeholder="Masukan Jumlah Eceran Barang" maxlength="50" required>
+                  </div>
+            </div>
+        </div>
+        <div class="row">
+           <div class="form-group col-md-6 col-xs-12" >
+                  <label for="jumlah_per_pack" class="col-sm-3 control-label">Jumlah Per Pack:</label>
+                  <div class="col-sm-9">
+                    <input type="text" class="form-control" id="jumlah_per_pack" name="jumlah_per_pack" value="<?php echo $jumlah_per_pack; ?>" placeholder="Masukan Jumlah Per Pack Barang" maxlength="50" required>
+                  </div>
+            </div>
+        </div>
+        <div class="row">
+           <div class="form-group col-md-6 col-xs-12" >
+                  <label for="satuan_eceran" class="col-sm-3 control-label">Satuan Eceran:</label>
+                  <div class="col-sm-9">
+                    <select class="form-control select1" style="width: 100%;" name="satuan_eceran" required>
                       <option></option>
                     <?php
                     $sql=mysqli_query($conn,"select * from satuan");
                     while ($row=mysqli_fetch_assoc($sql)){
-                    if ($satuan==$row['nama'])
-                    echo "<option value='".$row['kode']."' selected='selected'>".$row['nama']."</option>";
-                    else
-                    echo "<option value='".$row['kode']."'>".$row['nama']."</option>";
+                      echo "satuan eceran=" . $satuan_eceran;
+                      if ($satuan_eceran==$row['kode']) {
+                        echo "<option value='" .  $row['kode'] . "' selected>" . $row['nama']."</option>";
+                      } else {
+                        echo "<option value='".$row['kode']."'>".$row['nama']."</option>";
+                      }
                     }
                     ?>
                     </select>
@@ -234,7 +257,7 @@ if ($chmod >= 2 || $_SESSION['jabatan'] == 'admin') {
            <div class="form-group col-md-6 col-xs-12" >
                   <label for="biaya_eceran" class="col-sm-3 control-label">Harga Eceran:</label>
                   <div class="col-sm-9">
-                    <input type="text" class="form-control" id="biaya_eceran" name="biaya_eceran" value="<?php echo $biaya_eceran; ?>" placeholder="Masukan Harga Barang" maxlength="20" required>
+                    <input type="text" class="form-control" id="harga_eceran" name="harga_eceran" value="<?php echo $harga_eceran; ?>" placeholder="Masukan Harga Barang" maxlength="20" required>
                   </div>
                 </div>
         </div>
@@ -282,8 +305,12 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
           $kode = mysqli_real_escape_string($conn, $_POST["kode"]);
           $nama = mysqli_real_escape_string($conn, $_POST["nama"]);
           $satuan = mysqli_real_escape_string($conn, $_POST["satuan"]);
+          $satuan_eceran = mysqli_real_escape_string($conn, $_POST["satuan_eceran"]);
           $biaya = mysqli_real_escape_string($conn, $_POST["biaya"]);
+          $harga_eceran = mysqli_real_escape_string($conn, $_POST["harga_eceran"]);
           $jumlah = mysqli_real_escape_string($conn, $_POST["jumlah"]);
+          $jumlah_eceran = mysqli_real_escape_string($conn, $_POST["jumlah_eceran"]);
+          $jumlah_per_pack = mysqli_real_escape_string($conn, $_POST["jumlah_per_pack"]);
           $harga_modal = mysqli_real_escape_string($conn, $_POST["harga_modal"]);
           $total_modal = mysqli_real_escape_string($conn, $_POST["total_modal"]);
           $insert = ($_POST["insert"]);
@@ -294,8 +321,12 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
               if(mysqli_num_rows($result)>0){
           if($chmod >= 3 || $_SESSION['jabatan'] == 'admin'){
-                  $sql1 = "update $tabeldatabase set nama='$nama', satuan='$satuan', biaya='$biaya' where kode='$kode'";
+                  $sql1 = "update $tabeldatabase set nama='$nama', satuan='$satuan', 
+                  satuan_eceran='$satuan_eceran', biaya=$biaya, harga_eceran=$harga_eceran, 
+                  jumlah=$jumlah, jumlah_per_pack=$jumlah_per_pack, jumlah_eceran=$jumlah_eceran where kode='$kode'";
+                  
                   $updatean = mysqli_query($conn, $sql1);
+                  // echo $sql1;
                   echo "<script type='text/javascript'>  alert('Berhasil, Data telah diupdate!'); </script>";
                   echo "<script type='text/javascript'>window.location = '$forwardpage';</script>";
         }else{
@@ -305,8 +336,10 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         }
       else if(( $chmod >= 2 || $_SESSION['jabatan'] == 'admin')){
 
-           $sql2 = "insert into $tabeldatabase (kode,nama,satuan, biaya, jumlah, harga_modal, total_modal) 
-           values( '$kode','$nama','$satuan',$biaya, $jumlah, $harga_modal, $total_modal)";
+           $sql2 = "insert into $tabeldatabase (kode,nama,satuan, satuan_eceran, biaya, jumlah, jumlah_eceran, 
+                jumlah_per_pack, harga_modal, total_modal) 
+           values( '$kode','$nama','$satuan', '$satuan_eceran',$biaya, $jumlah, $jumlah_eceran, 
+           $jumlah_per_pack, $harga_modal, $total_modal)";
            if(mysqli_query($conn, $sql2)){
            echo "<script type='text/javascript'>  alert('Berhasil, Data telah disimpan!'); </script>";
            echo "<script type='text/javascript'>window.location = '$forwardpage';</script>";
@@ -396,6 +429,35 @@ function myFunction() {
     <script src="dist/plugins/timepicker/bootstrap-timepicker.min.js"></script>
     <script src="dist/plugins/iCheck/icheck.min.js"></script>
 <script>
+  $("#harga_modal").on("change", function(){
+    var total_modal=parseInt($("#jumlah").val())*parseFloat($("#harga_modal").val()); 
+    if ($("#jumlah_per_pack").val().trim()!="") {
+        total_modal+= parseInt($("#jumlah_eceran").val())*parseFloat($("#harga_modal").val())/parseInt($("#jumlah_per_pack").val());
+    }
+    $("#total_modal").val(total_modal);
+  });
+  $("#jumlah").on("change", function(){
+    var total_modal=parseInt($("#jumlah").val())*parseFloat($("#harga_modal").val()); 
+    if ($("#jumlah_per_pack").val().trim()!="" && $("#jumlah_eceran").val().trim()!="" ) {
+        total_modal+= parseInt($("#jumlah_eceran").val())*parseFloat($("#harga_modal").val())/parseInt($("#jumlah_per_pack").val());
+    }
+    if ($("#harga_modal").val().trim()!="")
+      $("#total_modal").val(total_modal);
+  });
+  $("#jumlah_eceran").on("change", function(){
+    var total_modal=parseInt($("#jumlah").val())*parseFloat($("#harga_modal").val()); 
+    if ($("#jumlah_per_pack").val().trim()!="" && $("#jumlah_eceran").val().trim()!="" ) {
+        total_modal+= parseInt($("#jumlah_eceran").val())*parseFloat($("#harga_modal").val())/parseInt($("#jumlah_per_pack").val());
+    }
+    $("#total_modal").val(total_modal);
+  });
+  $("#jumlah_per_pack").on("change", function(){
+    var total_modal=parseInt($("#jumlah").val())*parseFloat($("#harga_modal").val()); 
+    if ($("#jumlah_per_pack").val().trim()!="" && $("#jumlah_eceran").val().trim()!="" ) {
+        total_modal+= parseInt($("#jumlah_eceran").val())*parseFloat($("#harga_modal").val())/parseInt($("#jumlah_per_pack").val());
+    }
+    $("#total_modal").val(total_modal);
+  });
   $(function () {
     //Initialize Select2 Elements
     $(".select2").select2();

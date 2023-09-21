@@ -78,11 +78,12 @@ $thousand =".";
       var jumlah = $("#jumlah").val();
       var hargaakhir = $("#hargaakhir").val();
       var datatotal = $("#datatotal").val();
+      var profitakhir=$("#profitakhir").val();
       
       
      
 
-      $.post("add_jual.php", { kode: kode, barang: barang, nama: nama, hargajual: hargajual, hargabeli: hargabeli, jumlah: jumlah, hargaakhir: hargaakhir, datatotal: datatotal}, function(data) {
+      $.post("add_jual.php", { kode: kode, barang: barang, nama: nama, hargajual: hargajual, hargabeli: hargabeli, jumlah: jumlah, hargaakhir: hargaakhir, profitakhir: profitakhir, datatotal: datatotal}, function(data) {
 
       });
 
@@ -204,11 +205,13 @@ if ($chmod >= 2 || $_SESSION['jabatan'] == 'admin' || $_SESSION['jabatan'] == 'u
               $kode = mysqli_real_escape_string($conn,$_POST["kode"]);
               $layanan = mysqli_real_escape_string($conn,$_POST["layanan"]);
               $nama = mysqli_real_escape_string($conn,$_POST["nama"]);
-              $biaya = mysqli_real_escape_string($conn,$_POST["biaya"]);
+              $biaya = mysqli_real_escape_string($conn,$_POST["harga"]);
               $satuan = mysqli_real_escape_string($conn,$_POST["selectSatuan"]);
               $jumlah = mysqli_real_escape_string($conn,$_POST["jumlah"]);
               $hargaakhir = mysqli_real_escape_string($conn,$_POST["hargaakhir"]);
               $biayaakhir = mysqli_real_escape_string($conn,$_POST["biaya"]*$_POST["jumlah"]);
+              $profitakhir= mysqli_real_escape_string($conn,$_POST["profitakhir"]);
+            
               $insert = ($_POST["insert"]);
                 // echo 
 
@@ -221,9 +224,9 @@ if ($chmod >= 2 || $_SESSION['jabatan'] == 'admin' || $_SESSION['jabatan'] == 'u
               }
           else if(($chmod >= 2 || $_SESSION['jabatan'] == 'admin' || $_SESSION['jabatan'] == 'user'  )&&($jumlah > 0)){
               if ($nama!="Diskon") {
-                  $sql2 = "insert into $tabeldatabase (nota,kode,nama,biaya,satuan,jumlah,hargaakhir,biayaakhir) values( '$kode','$layanan','$nama','$biaya','$satuan','$jumlah','$hargaakhir','$biayaakhir')";
+                  $sql2 = "insert into $tabeldatabase (nota,kode,nama,biaya,satuan,jumlah,hargaakhir,biayaakhir,profitakhir) values( '$kode','$layanan','$nama',$biaya,'$satuan',$jumlah,$hargaakhir,$biayaakhir, $profitakhir)";
               } else {
-                  $sql2 = "insert into $tabeldatabase (nota,kode,nama,satuan,jumlah,hargaakhir,biayaakhir) values( '$kode','$layanan','$nama','$satuan','$jumlah','$hargaakhir','$biayaakhir')";
+                  $sql2 = "insert into $tabeldatabase (nota,kode,nama,satuan,jumlah,hargaakhir,biayaakhir,profitakhir) values( '$kode','$layanan','$nama','$satuan',$jumlah,$hargaakhir,$biayaakhir, $hargaakhir)";
               }
                echo $sql2;
                $insertan = mysqli_query($conn, $sql2);
@@ -378,24 +381,28 @@ if (win) {
                           <select class="form-control select2" style="width: 100%;" name="layanan" id="layanan">
                             <option></option>
                             <?php
-                            $sql=mysqli_query($conn,"select kode,nama,satuan,satuan_eceran,biaya, harga_eceran from stock");
+                            $sql=mysqli_query($conn,"select kode,nama,satuan,satuan_eceran,biaya, harga_eceran, profit, profit_eceran  from stock");
                             while ($row=mysqli_fetch_assoc($sql)){
 
                               $satuane = $row['satuan'];
-                              $satuan_eceran= $row['satuan_eceran'];
+                              $satuan_ecerane= $row['satuan_eceran'];
                               $sqlx2="SELECT * from satuan where kode ='$satuane'";
+                              $sqlx3="SELECT * from satuan where kode ='$satuan_ecerane'";
                               $hasilx2=mysqli_query($conn,$sqlx2);
+                              $hasilx3=mysqli_query($conn,$sqlx3);
                               $hasil=mysqli_fetch_assoc($hasilx2);
-                              $datae=$hasil['nama'];
+                              $hasil2=mysqli_fetch_assoc($hasilx3);
+                              $datae= $hasil['nama'];
+                              $datae2=$hasil2['nama'];
 
                               if ($layanan==$row['kode']){
                                 echo "<option value='" . $row['kode'] . "' nama='" . $row['nama'] . 
                                 "' satuan='".$datae.
-                                "' biaya='".$row['biaya'] . "' satuan_eceran='".$row['satuan_eceran'] .
+                                "' biaya='".$row['biaya'] . "' satuan_eceran='".$datae2 ."' profit='".$row["profit"] . "' profit_eceran='".$row["profit_eceran"] . 
                                 "' harga_eceran='".$row['harga_eceran'] . "' selected='selected'>" . $row['nama']." , Kode: ".$row['kode']."</option>";
                               }else{
                                 echo "<option value='".$row['kode']."' nama='".$row['nama']."' satuan='".$datae.
-                                "'  biaya='".$row['biaya']."' satuan_eceran='".$row['satuan_eceran'].
+                                "'  biaya='".$row['biaya']."' satuan_eceran='".$datae2 . "' profit='".$row["profit"] . "' profit_eceran='".$row["profit_eceran"] .
                                 "' harga_eceran='" . $row['harga_eceran'] . "' >" . $row['nama'] . 
                                 " , Kode: ".$row['kode']."</option>";
                               }
@@ -410,11 +417,11 @@ if (win) {
                 </div>
 
 
-                <div class="form-group col-md-6 col-xs-12">
+                <div class="orm-group col-md-6 col-xs-12">
                   <label for="kode">Tanggal:</label>
              <input type="text" class="form-control pull-right" id="datepicker2" name="tglnota" placeholder="Masukan Tanggal Nota" value="<?php echo $tglnota; ?>" >
         </div>
-
+f
       </div> -->
 <!--
 				<div class="row" >
@@ -424,19 +431,29 @@ if (win) {
                     <select class="form-control select2" style="width: 100%;" name="layanan" id="layanan">
                       <option></option>
     					<?php
-    		$sql=mysqli_query($conn,"select kode,nama,satuan, biaya from stock");
+    		$sql=mysqli_query($conn,"select kode,nama,satuan,satuan_eceran, biaya, profit, profit_eceran from stock");
     		while ($row=mysqli_fetch_assoc($sql)){
 
             $satuane = $row['satuan'];
+            $satuan_ecerane=$row['satuan_eceran'];
             $sqlx2="SELECT * from satuan where kode ='$satuane'";
+            $sqlx3="SELECT * from satuan where kode ='$satuan_ecerane'";
             $hasilx2=mysqli_query($conn,$sqlx2);
+            $hasilx3=mysqli_query($conn,$sqlx3);
             $hasil=mysqli_fetch_assoc($hasilx2);
+            $hasil2=mysqli_fetch_assoc($hasilx3);
             $datae=$hasil['nama'];
+            $datae2=$hasil2['nama'];
+    
 
     			if ($layanan==$row['kode']){
-    			echo "<option value='".$row['kode']."' nama='".$row['nama']."' satuan='".$datae."' biaya='".$row['biaya']."' selected='selected'>".$row['nama']." , Kode: ".$row['kode']."</option>";
+    			echo "<option value='".$row['kode']."' nama='".$row['nama']."' satuan='".$datae. 
+          " satuan_eceran='" . $datae2 . "' biaya='". $row['biaya'] ."' profit='".$row["profit"] . "' profit_eceran='".$row["profit_eceran"] .
+          "' selected='selected'>".$row['nama']." , Kode: ".$row['kode']."</option>";
         }else{
-    			echo "<option value='".$row['kode']."' nama='".$row['nama']."' satuan='".$datae."'  biaya='".$row['biaya']."' >".$row['nama']." , Kode: ".$row['kode']."</option>";
+    			echo "<option value='".$row['kode']."' nama='".$row['nama']."' satuan='".$datae. 
+          " satuan_eceran='" . $datae2 . "'  biaya='".$row['biaya'] . "' profit='".$row["profit"] . "' profit_eceran='".$row["profit_eceran"] . 
+          "' >".$row['nama']." , Kode: ".$row['kode']."</option>";
     		}
       }
     	?>
@@ -470,10 +487,12 @@ if (win) {
                                               <script>
                                                function sum() {
                                                      var txtFirstNumberValue =  document.getElementById('jumlah').value
-                                                     var txtSecondNumberValue = document.getElementById('biaya').value;
+                                                     var txtSecondNumberValue = document.getElementById('harga').value;
+                                                     var txtThirdNumberValue=document.getElementById('profit').value;
                                                      var txtHargaAkhirValue='<?php echo $hargaakhir;?>';
                                                      var result = parseFloat(txtFirstNumberValue) * parseFloat(txtSecondNumberValue);
                                                      var result2= -1 * parseFloat(txtFirstNumberValue) * parseFloat(txtHargaAkhirValue)/100;
+                                                     var result3= parseFloat(txtFirstNumberValue) * parseFloat(txtThirdNumberValue);
                                                      var nama = $("#layanan option:selected").attr("nama");
                                                      
                                                      if (!isNaN(result)) {
@@ -486,6 +505,12 @@ if (win) {
                                                         document.getElementById('hargaakhir').value = result2;
                                                         
                                                      }
+                                                     if (!isNaN(result3)) {
+                                                    
+                                                        document.getElementById('profitakhir').value = result3;
+                                                   
+                                                     }
+
                                                    if (!$(jumlah).val()){
                                                      document.getElementById('hargaakhir').value = "0";
                                                    }
@@ -499,7 +524,7 @@ error_reporting(E_ALL ^ (E_NOTICE | E_WARNING));
 ?>
                   <div class="col-sm-2">
                   <label for="usr">Harga</label>
-                  <input type="text" class="form-control" id="biaya" name="biaya" value="<?php  echo $biaya; ?>" readonly>
+                  <input type="text" class="form-control" id="harga" name="harga" value="<?php  echo $biaya; ?>" readonly>
                 </div>
 
 
@@ -525,6 +550,8 @@ error_reporting(E_ALL ^ (E_NOTICE | E_WARNING));
               <label for="usr">Harga Akhir</label>
               <input type="text" class="form-control" id="hargaakhir" name="hargaakhir" value="<?php echo $hargaakhir; ?>" readonly>
             </div>
+            <input type="hidden" class="form-control" id="profit" name="profit" value="0" readonly>
+            <input type="hidden" class="form-control" id="profitakhir" name="profitakhir" value="0" readonly>
 
 
             <div class="col-sm-2">
@@ -765,6 +792,8 @@ var biaya="";
 var satuan="";
 var harga_eceran="";
 var satuan_eceran="";
+var profit="";
+var profit_eceran="";
 
 $("#layanan").on("change", function(){
 
@@ -773,34 +802,37 @@ $("#layanan").on("change", function(){
   satuan = $("#layanan option:selected").attr("satuan");
   harga_eceran = $("#layanan option:selected").attr("harga_eceran");
   satuan_eceran = $("#layanan option:selected").attr("satuan_eceran");
+  profit= $("#layanan option:selected").attr("profit");
+  profit_eceran= $("#layanan option:selected").attr("profit_eceran");
 
   $("#nama").val(nama);
-  $("#biaya").val(biaya);
+  $("#harga").val(biaya);
   $("#satuan").val(satuan);
   $("#hargaakhir").val(0);
   $("#jumlah").val(0);
-  // var opt= document.getElementById('selectSatuan').options[0];
-  // var opt1= document.getElementById('selectSatuan').options[1];
-  //    opt.value = 'pack';
-  //    opt.text = 'pack';
-  //    opt1.value='lembar';
-  //    opt1.text= 'lembar';
-  // $('#selectSatuan').removeClass("disabled"); 
-  // $('#selectSatuan').addClass("enabled"); 
+  $("#profit").val(profit);
+  $("#profitakhir").val(0);
+
   $('#selectSatuan option[index="0"]').text(satuan);
   $('#selectSatuan option[index="1"]').text(satuan_eceran);
   $('#selectSatuan option[index="0"]').val(satuan);
   $('#selectSatuan option[index="1"]').val(satuan_eceran);
-  $('#selectSatuan option[index="0"]').attr('selected','selected');
+  // $('#selectSatuan option[index="0"]').attr('selected','selected');
 
 });
 
 $("#selectSatuan").on("change", function(){
   // alert("change");
-  if ( $("#selectSatuan").val()=="0") {
-    $("#biaya").val(biaya);
+  // alert($("#selectSatuan").val());
+  // alert(satuan);
+  if ($("#selectSatuan").val()==satuan) {
+    // alert("biaya=" + biaya);
+    $("#harga").val(biaya);
+    $("#profit").val(profit);
   } else {
-    $("#biaya").val(harga_eceran);
+    // alert("harga_eceran=" + harga_eceran);
+    $("#harga").val(harga_eceran);
+    $("#profit").val(profit_eceran);
     // alert(harga_eceran);
   }
 
