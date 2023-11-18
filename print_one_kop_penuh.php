@@ -73,25 +73,33 @@ etc();session();connect();
             return terbilang($x / 1000000) . " juta" . terbilang($x % 1000000);
         }
         ?>
-        <table class="table-header">
-          <?php if($avatar == "dist/upload/index.jpg"){}else{?>
-        <tr><td colspan="6" class="nama" style="width:240px"><img src="<?php echo $avatar; ?>" style="max-width:100%;"></td></tr>
-            <?php } ?>
-        <tr><td colspan="6" class="nama" style="font-size:16px; font-weight:bold; width:240px"><?php echo $nama;?></td></tr>
-        <tr><td colspan="6" style="font-style:italic; width:240px;  "><?php echo $tagline;?></td></tr>
-        <tr><td colspan="6" style="width:240px;"><?php echo $alamat;?></td></tr>
-        <tr><td colspan="6" style="border-bottom:double 4px #000; padding-bottom:5px;width:240px;"><?php echo $notelp;?></td></tr>
-
+        <table>
+        <tr><td colspan="2">
+        <div><img src="dist/upload/koplincah_kiri.png" style="max-width:100%;"  width="1500" height="300"></div>
+        </td>
+        <td colspan="2">
+        <td style="width:192px;" colspan="6" align="left">Pelanggan : <b><?php echo $namapelanggan;?></b> / <?php echo $nohppelanggan; ?>
+        <?php echo $alamatpelanggan;?>
+        </td
+        </tr>
+        <tr><td colspan="4">
+        <div><img src="dist/upload/koplincah_bawah.png" style="max-width:100%;"  width="1500" height="50"></div>
+        </td>
+        
+        </tr>
+        
+        
         </table>
 
-        <table class="table-print">
+        <table class="table-print-A4">
         <tr class="spa">
-        <td width="20%" style="width:48px;">&nbsp;</td>
-        <td width="15%" style="width:28.8px;">&nbsp;</td>
-        <td width="20%"  style="width:43.2px;">&nbsp;</td>
-        <td width="18%"  style="width:48px;">&nbsp;</td>
-        <td width="18%"  style="width:60px;">&nbsp;</td>
-        <td width="8%"  style="width:12px;">&nbsp;</td>
+        <td width="5%"  style="width:20px;">&nbsp;</td>
+        <td width="20%" style="width:100px;">&nbsp;</td>
+        <td width="20%" style="width:100px;">&nbsp;</td>
+        <td width="20%"  style="width:100px;">&nbsp;</td>
+        <td width="10%"  style="width:50px;">&nbsp;</td>
+        <td width="25%"  style="width:100px;">&nbsp;</td>
+      
         </tr>
         <tr>
         </tr>
@@ -103,16 +111,22 @@ etc();session();connect();
         	 <td style="width:192px;" colspan="6" align="left">Tgl Transaksi : <?php echo $tglmasuk;?> / <?php echo $jammasuk; ?></td>
          </tr>
          <tr>
-           <td style="width:192px;" colspan="6" align="left">Pelanggan : <b><?php echo $namapelanggan;?></b> / <?php echo $nohppelanggan; ?></td>
+           
          </tr>
          <tr>
-           <td style="width:192px;" colspan="6" align="left"><?php echo $alamatpelanggan;?></td>
+           <td style="width:192px;" colspan="6" align="left"></td>
         </tr>
         <tr>
           <td style="width:192px;" colspan="6" align="left"></td>
        </tr>
-           <tr class="siv solid">
-          	<td colspan="6" style="width:240px;">
+          
+       
+       <tr><td>No.</td><td colspan="2" style="width:50px;">KETERANGAN</td>
+       <td > BANYAKNYA </td>
+       <td > HARGA SATUAN </td>
+       <td > JUMLAH BIAYA </td></tr>
+       <tr class="siv solid">
+          	<td colspan="7" style="width:800px;">
         	<div class="solid-border" ></div>
         </td>
           </tr>
@@ -121,38 +135,49 @@ etc();session();connect();
 
           $query1="SELECT * FROM  transaksimasuk where nota ='$nota' order by no";
           $hasil = mysqli_query($conn,$query1);
+          $i=1;
           while ($fill = mysqli_fetch_assoc($hasil)){
               if (mysqli_real_escape_string($conn, $fill['nama'])!="Diskon") {
-                  echo '<tr><td colspan="6" style="width:240px;">' .  
-                        mysqli_real_escape_string($conn, $fill['nama']) . '</td></tr>';
+                  echo '<tr><td>' .  $i . '. </td><td colspan="2" style="width:50px;">' . 
+                        mysqli_real_escape_string($conn, $fill['nama']) . '</td>';
                
-                  echo '<tr><td  style="width:76.8px;">Qty : </td>';
-                  echo '<td style="width:43.2px;">' .  mysqli_real_escape_string($conn, $fill['jumlah'].$fill['satuan']) . '</td>';
-                  echo '<td colspan="2" style="width:58px;" align="right">x ' . number_format(($fill["biaya"]), $decimal, $a_decimal, $thousand) . ',-' . '</td>';
+                  
+                  echo '<td style="width:50px;" align="right">' .  mysqli_real_escape_string($conn, $fill['jumlah'].$fill['satuan']) . '</td>';
+                  echo '<td  style="width:100px;" align="right"> ' . number_format(($fill["biaya"]), $decimal, $a_decimal, $thousand) . ',-' . '</td>';
               } else {
-                  echo '<tr><td  style="width:240px;">' .  
+                  echo '<tr><td></td><td  style="width:200px;">' .  
                       mysqli_real_escape_string($conn, $fill['nama']) . '</td>';
-                  echo '<td colspan="2" style="width:43.2px;">' .  mysqli_real_escape_string($conn, $fill['jumlah'].$fill['satuan']) . '</td>';
+                  echo '<td  style="width:100px;">' .  mysqli_real_escape_string($conn, $fill['jumlah'].$fill['satuan']) . '</td>';
                   echo '<td></td>';
                  
               }
               
               echo '<td style="width:62px;" colspan="2" align="right">' . number_format(($fill['hargaakhir']), $decimal, $a_decimal, $thousand).',- </td></tr>';
             
+
+
+
+
+
+              
+
+
               ?>
             <tr class="siv">
-              <td colspan="5" style="width:228px;">
+              <td colspan="7" style="width:1060px;">
             <div class="dotted-border"></div>	</td>
-            <td style="width:12px;">(+)	</td>
+            <td style="width:12px;"></td>
             </tr>
 
             <?php
             ;
+            $i++;
           }
 
            ?>
 
         <tr>
+          <td></td>
         	<td colspan="1" style="width:76.8px;">Total Qty</td>
           <td style="width:43.2px;"><?php echo $totalqty; ?></td>
         	<td colspan="2" style="width:48px;"><b>Total</b></td>
@@ -160,7 +185,7 @@ etc();session();connect();
          </tr>
 
            <tr class="siv solid">
-          	<td colspan="6" style="width:240px;">
+          	<td colspan="7" style="width:240px;">
         	<div class="solid-border" ></div>
         </td>
           </tr>
@@ -169,11 +194,11 @@ etc();session();connect();
         </tr>
 
         <tr>
-        	<td style="width:237px;" colspan="6" align="right"><?php echo $kasir;?></td>
+        	<td style="width:237px;" colspan="7" align="right"><?php echo $kasir;?></td>
         </tr>
 
            <tr class="siv solid">
-          	<td colspan="6" style="width:240px;">
+          	<td colspan="7" style="width:240px;">
         	<div class="solid-border" ></div>
         </td>
           </tr>
@@ -186,6 +211,18 @@ etc();session();connect();
           <tr class="terakhir">
         	<td style="width:240px;" colspan="6"></td>
           </tr>
+          <?php
+          echo '<tr><td colspan="5">
+          <div><img src="dist/upload/koplincah_perhatian.png" style="max-width:100%;"  width="1500" height="50"></div>
+          </td>';
+          echo '<td></td></tr>';
+
+          echo '<tr><td colspan="6">
+          <div><img src="dist/upload/koplincah_tujuan.png" style="max-width:100%;"  width="1500" height="50"></div>
+          </td>';
+          echo '<td></td></tr>';
+
+          ?>
         </table>
 
 
