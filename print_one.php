@@ -1,11 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-  </head>
-
-  
 <?php
 error_reporting(0);
 include "configuration/config_etc.php";
@@ -57,7 +51,8 @@ etc();session();connect();
         $hasil1=mysqli_query($conn,$sql1);
         $row=mysqli_fetch_assoc($hasil1);
         $totalqty=$row['data'];
-
+        $tunai=3000000;
+        
         function terbilang($x) {
           $angka = ["", "satu", "dua", "tiga", "empat", "lima", "enam", "tujuh", "delapan", "sembilan", "sepuluh", "sebelas"];
         
@@ -79,55 +74,19 @@ etc();session();connect();
             return terbilang($x / 1000000) . " juta" . terbilang($x % 1000000);
         }
         ?>
-
-
-        <div class="container">
-          <!-- =================== alamat pelanggan================================================= -->
-        <div class="row">
-          <div class="col-8"><img src="dist/upload/koplincah_kiri.png" style="max-width:100%;"  width="600" height="100"></div>
-          <div class="col-4">
-            <TABLE width="600">
-            <TR></tr>
-            <TR></tr>
-            <TR></tr>
-            <tr >
-              <td style="width:192px;" align="left">Tgl Transaksi : <?php echo $tglmasuk;?> / <?php echo $jammasuk; ?></td>
-            </tr>
-            <tr>
-              <td style="width:192px;"  align="left">Pelanggan : <b><?php echo $namapelanggan;?></b> / <?php echo $nohppelanggan; ?></td>
-            </tr>
-            <tr>
-              <td style="width:192px;" align="left"><?php echo $alamatpelanggan;?></td>
-            </tr>
-            <tr>
-              <td style="width:192px;" align="left"></td>
-            </tr>
-            </table>
-          </DIV>
-        </DIV>
-        <div class="col"><div><img src="dist/upload/koplincah_bawah.png" style="max-width:100%;"  width="1500" height="50"></div></div>
-        <tr >
-            <td style="width:192px;" colspan="6" align="center"><h2>Faktur - <?php echo $nota;?></h2></td>
-        </tr>
-                 
-          <!-- <div class="col"><div><img src="dist/upload/koplincah_bawah.png" style="max-width:100%;"  width="1500" height="50"></div>
-          <div class="col"><img src="dist/upload/koplincah_kiri.png" style="max-width:100%;"  width="600" height="200"></div> -->
-        </div>
-         <!-- =============================================================================== -->   
-      </div>
-        
-        
-        <!-- <div class="row">
-        
-        
-            </div>
-
-        <div class="container">
-          <!-- Content here -->
-         
-          
-          <!-- <div><img src="dist/upload/koplincah_faktur.png" style="max-width:100%;"  width="500" height="25"></div> -->
-        
+        <table><tr><td width="60%" >
+        <div><img src="dist/upload/koplincah_kiri.png" style="max-width:50%;"  width="800" height="100"></div>
+        </td><td>
+        <table><tr><td width="50%" >Tgl Transaksi : <?php echo $tglmasuk;?> / <?php echo $jammasuk; ?></td></tr>
+               <tr><td>Pelanggan : <b><?php echo $namapelanggan;?></b> / <?php echo $nohppelanggan; ?></td></tr>
+               <tr><td style="width:192px;" colspan="6" align="left"><?php echo $alamatpelanggan;?></td></tr></table><td></tr>
+        <tr><td colspan="2" width="50%"  style="width:900px;">
+        <div><img src="dist/upload/koplincah_bawah.png" style="max-width:100%;"  width="1500" height="50"></div>
+        </td></tr>
+        <!-- <tr><td> -->
+        <!-- <div><img src="dist/upload/koplincah_faktur.png" style="max-width:100%;"  width="1500" height="25"></div> -->
+        <!-- </td></tr> -->
+        </table>
 
         <table class="table-print-A4">
         <tr class="spa">
@@ -139,14 +98,18 @@ etc();session();connect();
         <td width="25%"  style="width:100px;">&nbsp;</td>
       
         </tr>
+        
+        <tr >
+        	 <td style="width:192px;" colspan="6" align="left"><h2>No.Nota - <?php echo $nota;?></h2></td>
+        </tr>
+        
+          
        
-
-       
-       
-       <tr><td>No.</td><td colspan="2" style="width:50px;">KETERANGAN</td>
-       <td > BANYAKNYA </td>
-       <td > HARGA SATUAN </td>
-       <td > JUMLAH BIAYA </td></tr>
+       <tr><td><strong>NO</strong></td>
+       <td colspan="2" style="width:50px;"><strong>KETERANGAN</strong></td>
+       <td ><strong> BANYAKNYA</strong> </td>
+       <td ><strong> HARGA SATUAN</strong> </td>
+       <td ><strong> JUMLAH BIAYA</strong> </td></tr>
        <tr class="siv solid">
           	<td colspan="7" style="width:800px;">
         	<div class="solid-border" ></div>
@@ -176,19 +139,11 @@ etc();session();connect();
               
               echo '<td style="width:62px;" colspan="2" align="right">' . number_format(($fill['hargaakhir']), $decimal, $a_decimal, $thousand).',- </td></tr>';
             
-
-
-
-
-
-              
-
-
               ?>
             <tr class="siv">
               <td colspan="7" style="width:1060px;">
             <div class="dotted-border"></div>	</td>
-            <td style="width:12px;"></td>
+            <td style="width:12px;">	</td>
             </tr>
 
             <?php
@@ -200,11 +155,29 @@ etc();session();connect();
 
         <tr>
           <td></td>
-        	<td colspan="1" style="width:76.8px;">Total Qty</td>
+        	<td colspan="2" style="width:76.8px;">Total Qty</td>
           <td style="width:43.2px;"><?php echo $totalqty; ?></td>
-        	<td colspan="2" style="width:48px;"><b>Total</b></td>
+        	<td style="width:48px;"><b>TOTAL</b></td>
         	<td style="width:72px;" colspan="2" align="right"><b><?php echo number_format($total, $decimal, $a_decimal, $thousand).',-';?></b></td>
          </tr>
+
+         <tr>
+          <td></td>
+        	<td colspan="2" style="width:76.8px;"></td>
+          <td style="width:43.2px;"></td>
+        	<td  style="width:48px;">TUNAI</td>
+        	<td style="width:72px;" colspan="2" align="right"><?php echo number_format($tunai, $decimal, $a_decimal, $thousand).',-';?></td>
+         </tr>
+         <tr>
+          <td></td>
+        	<td colspan="2" style="width:76.8px;"></td>
+          <td style="width:43.2px;"></td>
+        	<td  style="width:48px;">KEMBALI</td>
+        	<td style="width:72px;" colspan="2" align="right"><?php echo number_format($tunai-$total, $decimal, $a_decimal, $thousand).',-';?></td>
+         </tr>
+
+
+
 
            <tr class="siv solid">
           	<td colspan="7" style="width:240px;">
@@ -226,21 +199,26 @@ etc();session();connect();
           </tr>
 
         <tr>
-        	
+        	<td style="width:240px;" colspan="6"><pre  style="white-space: pre-line;">
+          <?php echo $signature;?>
+          <pre></td>
           </tr>
-          
-          <?php
-          echo '<tr><td colspan="5">
-          <div><img src="dist/upload/koplincah_perhatian.png" style="max-width:100%;"  width="1500" height="50"></div>
-          </td>';
-          echo '<td></td></tr>';
+          <tr>
+            <td colspan="8">
+                <div><img src="dist/upload/koplincah_perhatian.png" style="max-width:80%;"  width="1500" height="50"></div>
+            </td>
+            <td>
 
-          echo '<tr><td colspan="6">
-          <div><img src="dist/upload/koplincah_tujuan.png" style="max-width:100%;"  width="1500" height="50"></div>
-          </td>';
-          echo '<td></td></tr>';
+            </td>
+          </tr>
+          <tr>
+            <td colspan="8">
+                <div><img src="dist/upload/koplincah_tujuan.png" style="max-width:80%;"  width="1500" height="50"></div>
+            </td>
+            <td>
 
-          ?>
+            </td>
+          </tr>
           <tr class="terakhir">
         	<td style="width:240px;" colspan="6"></td>
           </tr>
