@@ -1,5 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
+
+
 <?php
 error_reporting(0);
 include "configuration/config_etc.php";
@@ -18,8 +20,8 @@ etc();session();connect();
         ?>
 
         <?php
-        $nota = $_GET["nota"];
-
+        $nota = $_POST["nota"];
+        $tunai= $_POST["tunai"];
         $sql1="SELECT * FROM data";
       	$hasil1=mysqli_query($conn,$sql1);
       	$row=mysqli_fetch_assoc($hasil1);
@@ -31,6 +33,7 @@ etc();session();connect();
         $avatar=$row['avatar'];
 
         $sql1="SELECT * FROM bayar where nota='$nota'";
+        
         $hasil1=mysqli_query($conn,$sql1);
         $row=mysqli_fetch_assoc($hasil1);
         $tglmasuk=$row['tglmasuk'];
@@ -51,8 +54,24 @@ etc();session();connect();
         $hasil1=mysqli_query($conn,$sql1);
         $row=mysqli_fetch_assoc($hasil1);
         $totalqty=$row['data'];
-        $tunai=3000000;
+        // $tunai = $_COOKIE['score'];
+        // $prompt_msg = "TUNAI ";
+        // $tunai = prompt("TUNAI");
+        // $tunai=(int)$tunai;
+        // echo $tunai;
+        // $output_msg = "Hello there ".$tunai."!";
+        // echo($output_msg);
+        // $tunai=prompt("Tunai");
+        // $tunai=3000000;
         
+        function prompt($prompt_msg){
+          echo("<script type='text/javascript'> var answer = prompt('".$prompt_msg."'); </script>");
+  
+          $answer = "<script type='text/javascript'> document.write(answer).value); </script>";
+          return($answer);
+      }
+
+
         function terbilang($x) {
           $angka = ["", "satu", "dua", "tiga", "empat", "lima", "enam", "tujuh", "delapan", "sembilan", "sepuluh", "sebelas"];
         
@@ -208,7 +227,7 @@ etc();session();connect();
                 <div><img src="dist/upload/koplincah_perhatian.png" style="max-width:80%;"  width="1500" height="50"></div>
             </td>
             <td>
-
+                Hormat Kami
             </td>
           </tr>
           <tr>
@@ -216,7 +235,7 @@ etc();session();connect();
                 <div><img src="dist/upload/koplincah_tujuan.png" style="max-width:80%;"  width="1500" height="50"></div>
             </td>
             <td>
-
+                ...............................
             </td>
           </tr>
           <tr class="terakhir">
