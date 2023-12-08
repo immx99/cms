@@ -194,6 +194,10 @@ if ($chmod >= 2 || $_SESSION['jabatan'] == 'admin' || $_SESSION['jabatan'] == 'u
       $row=mysqli_fetch_assoc($hasile);
       $databelitotal=$row['data'];
 
+      $sqle="SELECT SUM(profitakhir) as data FROM transaksimasuk WHERE nota='$kode'";
+      $hasile=mysqli_query($conn,$sqle);
+      $row=mysqli_fetch_assoc($hasile);
+      $total_profit=$row['data'];
 
     }
 
@@ -211,7 +215,9 @@ if ($chmod >= 2 || $_SESSION['jabatan'] == 'admin' || $_SESSION['jabatan'] == 'u
               $hargaakhir = mysqli_real_escape_string($conn,$_POST["hargaakhir"]);
               $biayaakhir = mysqli_real_escape_string($conn,$_POST["biaya"]*$_POST["jumlah"]);
               $profitakhir= mysqli_real_escape_string($conn,$_POST["profitakhir"]);
-            
+              // if ($jumlah==0) {
+              //     $
+              // }
               $insert = ($_POST["insert"]);
                 // echo 
 
@@ -228,7 +234,7 @@ if ($chmod >= 2 || $_SESSION['jabatan'] == 'admin' || $_SESSION['jabatan'] == 'u
               } else {
                   $sql2 = "insert into $tabeldatabase (nota,kode,nama,satuan,jumlah,hargaakhir,biayaakhir,profitakhir) values( '$kode','$layanan','$nama','$satuan',$jumlah,$hargaakhir,$biayaakhir, $hargaakhir)";
               }
-               echo $sql2;
+              //  echo $sql2;
                $insertan = mysqli_query($conn, $sql2);
              }else{
               echo "<script type='text/javascript'>  alert('Gagal, Jumlah tidak boleh kosong!');</script>";
@@ -249,12 +255,24 @@ if ($chmod >= 2 || $_SESSION['jabatan'] == 'admin' || $_SESSION['jabatan'] == 'u
               $tglnota = mysqli_real_escape_string($conn,$_POST["tglnota"]);
               $pelanggan = mysqli_real_escape_string($conn,$_POST["pelanggan"]);
               if($pelanggan == null || $pelanggan == ""){
-                $pelanggan = mysqli_real_escape_string('1');
+                $pelanggan = "Umum";
               }else{
                 $pelanggan = mysqli_real_escape_string($conn,$_POST["pelanggan"]);
               }
+              
               $tgldeadline = mysqli_real_escape_string($conn,$_POST["tgldeadline"]);
               $jamdeadline = mysqli_real_escape_string($conn,$_POST["jamdeadline"]);
+              if($tgldeadline == null || $tgldeadline == ""){
+                  $tgldeadline=date("Y-m-d");
+              } else {
+                  $tgldeadline = mysqli_real_escape_string($conn,$_POST["tgldeadline"]);
+              }
+              if($jamdeadline == null || $jamdeadline == ""){
+                  $jamdeadline= date("H:i");
+              } else {
+                  $jamdeadline = mysqli_real_escape_string($conn,$_POST["jamdeadline"]);
+              }
+             
               $catatan = mysqli_real_escape_string($conn,$_POST["catatan"]);
               $jammasuk = date("G:H:i");
               $kasir = $_SESSION["username"];
@@ -271,7 +289,7 @@ if ($chmod >= 2 || $_SESSION['jabatan'] == 'admin' || $_SESSION['jabatan'] == 'u
               }
           else if(( $chmod >= 2 || $_SESSION['jabatan'] == 'admin' || $_SESSION['jabatan'] == 'user'  )){
 
-               $sql2 = "insert into bayar (nota,tglmasuk,jammasuk,pelanggan,total,tgldeadline,jamdeadline,status,kasir,catatan) values( '$kode','$tglnota','$jammasuk','$pelanggan','$datatotal','$tgldeadline','$jamdeadline','Diterima','$kasir','$catatan')";
+               $sql2 = "insert into bayar (nota,tglmasuk,jammasuk,pelanggan,total,total_profit,tgldeadline,jamdeadline,status,kasir,catatan) values( '$kode','$tglnota','$jammasuk','$pelanggan',$datatotal, $total_profit, '$tgldeadline','$jamdeadline','Diterima','$kasir','$catatan')";
                $myIPsFile = fopen("sql.log", "a") or die("Unable to open file!");
                 fwrite($myIPsFile, $sql2);
                 fclose($myIPsFile);
@@ -281,7 +299,7 @@ if ($chmod >= 2 || $_SESSION['jabatan'] == 'admin' || $_SESSION['jabatan'] == 'u
 ?>
 <script type="text/javascript">
 window.onload = function() {
-  var win = window.open('print_one.php?nota=<?php echo $kode;?>','Cetak',' menubar=0, resizable=0,dependent=0,status=0,width=260,height=400,left=10,top=10','_blank');
+  var win = window.open('tunai.php?nota=<?php echo $kode;?>','Cetak',' menubar=0, resizable=0,dependent=0,status=0,width=260,height=400,left=10,top=10','_blank');
  
 if (win) {
   alert('Berhasil, Data telah disimpan!');
@@ -728,7 +746,7 @@ error_reporting(E_ALL ^ (E_NOTICE | E_WARNING));
 
                                   <div class="col-sm-3">
                                   <label for="usr" style="color:transparent">.</label>
-                                  <button type="submit" class="btn btn-block pull-left btn-flat btn-success" name="simpan" onclick="document.getElementById('Myform').submit();" >Proses Order</button>
+                                  <button type="submit" class="btn btn-block pull-left btn-flat btn-success disabled" name="simpan" id="simpan" onclick="document.getElementById('Myform').submit();" >Proses Order</button>
                                   </div>
 
                               </div>
@@ -740,7 +758,10 @@ error_reporting(E_ALL ^ (E_NOTICE | E_WARNING));
 <script>
 function myFunction() {
     document.getElementById("Myform").submit();
+
 }
+
+
 </script>
 
 	  <!-- KONTEN BODY AKHIR -->
@@ -837,6 +858,22 @@ $("#selectSatuan").on("change", function(){
   }
 
 });
+
+
+    // $("#pelanggan").on("change", function(){
+    // alert("ready");
+    $("#pelanggan").change(function() { 
+        // alert("change");
+        if ($("#pelanggan").val().trim().length !=0 ) {
+            $("#simpan").removeClass("disabled");// 
+            $("#simpan").addClass("enabled");// for 
+        } else {
+            $("#simpan").removeClass("enabled");// 
+            $("#simpan").addClass("disabled");// for 
+        }
+    });
+
+
 </script>
 
         <script src="dist/bootstrap/js/bootstrap.min.js"></script>
