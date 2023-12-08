@@ -20,8 +20,12 @@ etc();session();connect();
         ?>
 
         <?php
-        $nota = $_POST["nota"];
-        $tunai= $_POST["tunai"];
+        $nota = $_GET["nota"];
+        if (isset($_GET["tunai"])) {
+            $tunai= $_GET["tunai"];
+        } else {
+            $tunai=0;
+        }
         $sql1="SELECT * FROM data";
       	$hasil1=mysqli_query($conn,$sql1);
       	$row=mysqli_fetch_assoc($hasil1);
@@ -179,22 +183,89 @@ etc();session();connect();
         	<td style="width:48px;"><b>TOTAL</b></td>
         	<td style="width:72px;" colspan="2" align="right"><b><?php echo number_format($total, $decimal, $a_decimal, $thousand).',-';?></b></td>
          </tr>
+         <?php
+          $sql4="select uang_muka from bayar where nota='$nota'";
+          // echo $sql4;
+          $hasil4= mysqli_query($conn, $sql4);
+          while ($fill4 = mysqli_fetch_assoc($hasil4)){
+              $uang_muka=(int) $fill4["uang_muka"];
+          }
+          if ($uang_muka==0) {
 
-         <tr>
-          <td></td>
-        	<td colspan="2" style="width:76.8px;"></td>
-          <td style="width:43.2px;"></td>
-        	<td  style="width:48px;">TUNAI</td>
-        	<td style="width:72px;" colspan="2" align="right"><?php echo number_format($tunai, $decimal, $a_decimal, $thousand).',-';?></td>
-         </tr>
-         <tr>
-          <td></td>
-        	<td colspan="2" style="width:76.8px;"></td>
-          <td style="width:43.2px;"></td>
-        	<td  style="width:48px;">KEMBALI</td>
-        	<td style="width:72px;" colspan="2" align="right"><?php echo number_format($tunai-$total, $decimal, $a_decimal, $thousand).',-';?></td>
-         </tr>
+              if ($tunai >=$total) {
+                ?>
+                <tr>
+                  <td></td>
+                  <td colspan="2" style="width:76.8px;"></td>
+                  <td style="width:43.2px;"></td>
+                  <td  style="width:48px;">TUNAI</td>
+                  <td style="width:72px;" colspan="2" align="right"><?php echo number_format($tunai, $decimal, $a_decimal, $thousand).',-';?></td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td colspan="2" style="width:76.8px;"></td>
+                  <td style="width:43.2px;"></td>
+                  <td  style="width:48px;">KEMBALI</td>
+                  <td style="width:72px;" colspan="2" align="right"><?php echo number_format($tunai-$total, $decimal, $a_decimal, $thousand).',-';?></td>
+                </tr>
+              <?php
+              } else {
+                ?>
+                  <tr>
+                  <td></td>
+                  <td colspan="2" style="width:76.8px;"></td>
+                  <td style="width:43.2px;"></td>
+                  <td  style="width:48px;">UANG MUKA</td>
+                  <td style="width:72px;" colspan="2" align="right"><?php echo number_format($tunai, $decimal, $a_decimal, $thousand).',-';?></td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td colspan="2" style="width:76.8px;"></td>
+                  <td style="width:43.2px;"></td>
+                  <td  style="width:48px;">SISA</td>
+                  <td style="width:72px;" colspan="2" align="right"><?php echo number_format($total-$tunai, $decimal, $a_decimal, $thousand).',-';?></td>
+                </tr>
 
+              <?php
+                  $update="update bayar set uang_muka=" . $tunai . " where nota='$nota'";
+                  mysqli_query($conn, $update);
+              }
+            } else {
+              ?>
+                  <tr>
+                  <td></td>
+                  <td colspan="2" style="width:76.8px;"></td>
+                  <td style="width:43.2px;"></td>
+                  <td  style="width:48px;">UANG MUKA</td>
+                  <td style="width:72px;" colspan="2" align="right"><?php echo number_format($uang_muka, $decimal, $a_decimal, $thousand).',-';?></td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td colspan="2" style="width:76.8px;"></td>
+                  <td style="width:43.2px;"></td>
+                  <td  style="width:48px;">SISA</td>
+                  <td style="width:72px;" colspan="2" align="right"><?php echo number_format($total-$uang_muka, $decimal, $a_decimal, $thousand).',-';?></td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td colspan="2" style="width:76.8px;"></td>
+                  <td style="width:43.2px;"></td>
+                  <td  style="width:48px;">TUNAI</td>
+                  <td style="width:72px;" colspan="2" align="right"><?php echo number_format($tunai, $decimal, $a_decimal, $thousand).',-';?></td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td colspan="2" style="width:76.8px;"></td>
+                  <td style="width:43.2px;"></td>
+                  <td  style="width:48px;">KEMBALI</td>
+                  <td style="width:72px;" colspan="2" align="right"><?php echo number_format($tunai-$total+$uang_muka, $decimal, $a_decimal, $thousand).',-';?></td>
+                </tr>
+
+
+              <?php
+
+            }
+          ?>
 
 
 
