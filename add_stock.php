@@ -321,12 +321,46 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
               if(mysqli_num_rows($result)>0){
           if($chmod >= 3 || $_SESSION['jabatan'] == 'admin'){
+                  if (trim($satuan_eceran)=="") {
+                    $satuan_eceran=$satuan;
+                  }
                   $sql1 = "update $tabeldatabase set nama='$nama', satuan='$satuan', 
-                  satuan_eceran='$satuan_eceran', biaya=$biaya, harga_eceran=$harga_eceran, 
-                  jumlah=$jumlah, jumlah_per_pack=$jumlah_per_pack, jumlah_eceran=$jumlah_eceran where kode='$kode'";
+                  satuan_eceran='$satuan_eceran'";
+
+                  if (trim($biaya)!="") {
+                        $sql1.=", biaya=" . $biaya;
+                  }
                   
-                  $updatean = mysqli_query($conn, $sql1);
+                  if (trim($jumlah)!="") {
+                    $sql1.=", jumlah=" . $jumlah;
+                  } else {
+                    $harga_eceran=$biaya;
+                  }
+
+                  if (trim($harga_eceran)!="") {
+                    $sql1.=", harga_eceran=" . $harga_eceran;
+                  }
+                  if (trim($jumlah_per_pack)!="") {
+                    $sql1.=", jumlah_per_pack=" . $jumlah_per_pack;
+                  }
+                  if (trim($jumlah_eceran)!="") {
+                    $sql1.=", jumlah_eceran=" . $jumlah_eceran;
+                  }
+                  if (trim($harga_modal)!="") {
+                      $sql1.=", harga_modal=" . $harga_modal;
+                  }
+                  if (trim($total_modal)!="") {
+                    $sql1.=", total_modal=" . $total_modal;
+                }
+
+                  $sql1 .= " where kode='$kode'";
+
                   // echo $sql1;
+                  // sleep(10);
+                  echo "<script type='text/javascript'>  alert('" . $sql1 . "'); </script>";
+                  $updatean = mysqli_query($conn, $sql1);
+                  
+                 
                   echo "<script type='text/javascript'>  alert('Berhasil, Data telah diupdate!'); </script>";
                   echo "<script type='text/javascript'>window.location = '$forwardpage';</script>";
         }else{
@@ -335,13 +369,52 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
           }
         }
       else if(( $chmod >= 2 || $_SESSION['jabatan'] == 'admin')){
+            if (trim($satuan_eceran)=="") {
+              $satuan_eceran=$satuan;
+            }
+           $sql2 = "insert into $tabeldatabase (kode,nama,satuan, satuan_eceran"; 
+           $value2 = "values( '$kode','$nama','$satuan', '$satuan_eceran'";
+          
+           if (trim($biaya)!="") {
+            $sql2.=", biaya";
+            $value2 .= "," . $biaya;
+          }
+         
+          if (trim($jumlah)!="") {
+            $sql2.=", jumlah";
+            $value2.="," .  $jumlah;
+          }
+          if (trim($jumlah_per_pack)!="") {
+            $sql2.=", jumlah_per_pack";
+            $value2.= ", " . $jumlah_per_pack;
+          } else {
+            $harga_eceran=$biaya;
+          }
+          if (trim($harga_eceran)!="") {
+            $sql2.=", harga_eceran";
+            $value2 .= ","  . $harga_eceran;
+          }
+          if (trim($jumlah_eceran)!="") {
+            $sql2.=", jumlah_eceran";
+            $value2.=", " . $jumlah_eceran;
+          }
+          if (trim($harga_modal)!="") {
+            $sql2.=", harga_modal";
+            $value2.=", " . $harga_modal;
+          }
+          if (trim($total_modal)!="") {
+            $sql2.=", total_modal";
+            $value2.=", " . $total_modal;
+          }
 
-           $sql2 = "insert into $tabeldatabase (kode,nama,satuan, satuan_eceran, biaya, jumlah, jumlah_eceran, 
-                jumlah_per_pack, harga_modal, total_modal) 
-           values( '$kode','$nama','$satuan', '$satuan_eceran',$biaya, $jumlah, $jumlah_eceran, 
-           $jumlah_per_pack, $harga_modal, $total_modal)";
-           if(mysqli_query($conn, $sql2)){
+
+
+          $sql2=$sql2 . ")" . $value2 . ")";
+
+           echo $sql2;
+           if(mysqli_query($conn, $sql2)) {
            echo "<script type='text/javascript'>  alert('Berhasil, Data telah disimpan!'); </script>";
+           
            echo "<script type='text/javascript'>window.location = '$forwardpage';</script>";
          }else{
            echo $sql2;
