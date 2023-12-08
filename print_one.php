@@ -22,7 +22,8 @@ etc();session();connect();
         <?php
         $nota = $_GET["nota"];
         if (isset($_GET["tunai"])) {
-            $tunai= $_GET["tunai"];
+            $tunai= (int)$_GET["tunai"];
+            
         } else {
             $tunai=0;
         }
@@ -231,6 +232,8 @@ etc();session();connect();
                   mysqli_query($conn, $update);
               }
             } else {
+                $sisa=$total-$uang_muka;
+                if ($tunai>=$sisa) {
               ?>
                   <tr>
                   <td></td>
@@ -244,7 +247,7 @@ etc();session();connect();
                   <td colspan="2" style="width:76.8px;"></td>
                   <td style="width:43.2px;"></td>
                   <td  style="width:48px;">SISA</td>
-                  <td style="width:72px;" colspan="2" align="right"><?php echo number_format($total-$uang_muka, $decimal, $a_decimal, $thousand).',-';?></td>
+                  <td style="width:72px;" colspan="2" align="right"><?php echo number_format($sisa, $decimal, $a_decimal, $thousand).',-';?></td>
                 </tr>
                 <tr>
                   <td></td>
@@ -258,12 +261,39 @@ etc();session();connect();
                   <td colspan="2" style="width:76.8px;"></td>
                   <td style="width:43.2px;"></td>
                   <td  style="width:48px;">KEMBALI</td>
-                  <td style="width:72px;" colspan="2" align="right"><?php echo number_format($tunai-$total+$uang_muka, $decimal, $a_decimal, $thousand).',-';?></td>
+                  <td style="width:72px;" colspan="2" align="right"><?php echo number_format($tunai-$sisa, $decimal, $a_decimal, $thousand).',-';?></td>
                 </tr>
 
 
               <?php
+                   $uang_muka=$total;
+                   $sisa=0;
+                   $update3="update bayar set uang_muka=" . $uang_muka . " where nota='$nota'";
+                   mysqli_query($conn, $update3);
 
+                } else {
+                      $uang_muka+=$tunai;
+                      $sisa=$total-$uang_muka;
+                      $update2="update bayar set uang_muka=" . $uang_muka . " where nota='$nota'";
+                      mysqli_query($conn, $update2);
+                      ?>
+                      <tr>
+                      <td></td>
+                      <td colspan="2" style="width:76.8px;"></td>
+                      <td style="width:43.2px;"></td>
+                      <td  style="width:48px;">UANG MUKA</td>
+                      <td style="width:72px;" colspan="2" align="right"><?php echo number_format($uang_muka, $decimal, $a_decimal, $thousand).',-';?></td>
+                    </tr>
+                    <tr>
+                      <td></td>
+                      <td colspan="2" style="width:76.8px;"></td>
+                      <td style="width:43.2px;"></td>
+                      <td  style="width:48px;">SISA</td>
+                      <td style="width:72px;" colspan="2" align="right"><?php echo number_format($sisa, $decimal, $a_decimal, $thousand).',-';?></td>
+                    </tr>
+    
+                  <?php
+                }
             }
           ?>
 
