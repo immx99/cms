@@ -3,11 +3,19 @@
 <head>
   <title>Bootstrap Example</title>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
-  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous"> 
+<meta name="description" content="Bootstrap.">  
+<link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">   
+
 </head>
+
+<style>
+input[readonly] {
+    background-color:lightgrey;
+    disabled;
+}
+</style>
 <body>
 <?php
 include "configuration/config_connect.php";
@@ -20,53 +28,95 @@ while ($fill5 = mysqli_fetch_assoc($hasil5)){
     $uangMuka=(int) $fill5["uang_muka"];
 }
 $lunasString="";
+$sisa=$total-$uangMuka;
 if ($total-$uangMuka<=0){
     $lunasString="Sudah lunas!!";
 }
 ?>
 
 
-<div class="card" style="width: 18rem;">
+<div class="card" style="width: 40rem;">
   <div class="card-header  text-center">
-    <h4>Pembayaran</h4>
+    <h4>PEMBAYARAN</h4>
   </div>
   <div class="card-body">
+       
         <form class="form-horizontal" method="get" action="print_one.php" id="cashForm" class="form-user">
- 
-        <!-- <div class="form-check form-check-inline">
-        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1" checked>
-        <label class="form-check-label" for="inlineRadio1">Tunai</label>
-        </div>
-        <div class="form-check form-check-inline">
-        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
-        <label class="form-check-label" for="inlineRadio2">Transfer ke BNI 007787e892</label>
-        </div>
-        <div class="form-check form-check-inline">
-        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3">
-        <label class="form-check-label" for="inlineRadio3">Transfer ke BCA 007787e892</label>
-        </div> -->
-        <div class="input-group input-group-sm mb-3">
-        <select class="form-select" id="trx" name="trx">
+        <table>
+        
+        <tr> <td width=30% align="left"><label for="nota">NO.NOTA</label></td>
+        <td  width=70% align="left">
+        <div class="input-group">
+        <input type="text" class="form-control" id="nota" name="nota" style= "text-align:right;" readonly></div>
+        </td></tr>
+
+        <tr> <td td width=50% align="left"><label for="nota">TOTAL    </label></td>
+        <td td width=50% align="left">
+        <div class="input-group">
+        
+        <input type="text" class="form-control" id="total" name="total" style= "text-align:right;" readonly></div>
+        </td></tr>
+
+        <tr> <td td width=30% align="left"><label for="nota">UANG MUKA </label></td>
+        <td td width=70% align="left">
+        <div class="input-group">
+        
+        <input type="text" class="form-control" id="uang_muka" name="uang_muka" style= "text-align:right;" readonly></div>
+        </td></tr>
+
+        <tr> <td td width=30% align="left"><label for="nota">KEKURANGAN </label></td>
+        <td td width=70% align="left">
+        <div class="input-group">
+       
+        <input type="text" class="form-control" id="sisa" name="sisa" style= "text-align:right;" readonly></div>
+        </td></tr>
+
+        
+        <tr> 
+        <td td width=30% align="left"><label for="trxLbl">TRANSAKSI </label></td>   
+        
+        <td td width=70% align="left">
+        <select class="form-select form-select-lg mb-3"  id="trx" name="trx" aria-label="Default select example">
             <option value="TUNAI" selected>Tunai</option>
-            <option value="TRANSFER KE BCA 007787892">Transfer ke BCA Nurhalmi 5255411273</option>
-            <option value="TRANSFER KE BRI 007787892">Transfer ke BRI Nurhalmi 112301000390569</option>
+            <option value="TRANSFER KE BCA NURHARMI 5255411273">Transfer ke BCA Nurhalmi 5255411273</option>
+            <option value="TRANSFER KE BRI NURHALMI 112301000390569">Transfer ke BRI Nurhalmi 112301000390569</option>
         </select>
         </div>
-
-      
+        </td></tr>
+        <?php
+        if ($sisa>0) {
+            ?>
        
-        <input type="hidden" class="form-control" id="nota" name="nota" >
-       
-
-        <div class="input-group input-group-sm mb-3">
-        <span class="input-group-text">Rp. </span>
-        <input type="text" class="form-control" id="nominal" name="nominal" style= "text-align: right;">
-        </div>
+        <tr> <td td width=30% align="left"><label for="nota">AMOUNT </label></td>
+        <td td width=70% align="left">
+        <div class="input-group">
+        
+        <input type="text" class="form-control" id="nominal" name="nominal" style= "text-align:right;"></div>
+        </td></tr>
+        <?php
+        } else {
+            ?>
+             <tr> <td td width=30% align="left"><label for="nota">AMOUNT </label></td>
+        <td td width=70% align="left">
+        <div class="input-group">
+        
+        <input type="text" class="form-control" id="nominal" name="nominal" style= "text-align:right;" readonly></div>
+        </td></tr>
+       <?php
+        }
+        ?>
+        <tr><td colspan="2">
         <blockquote class="blockquote mb-0">
             <p id="lunas"></p>
         </blockquote>
+        </td></tr>
+        <tr><td colspan="2" align="center">
         <button type="button" class="btn btn-primary" onclick="document.getElementById('cashForm').submit();">Cetak</button>
-        </form>
+        <button type="button" class="btn btn-info" onclick="window.open('order_data.php')">Batal</button>
+    </td></tr>
+    </table>
+    </form>
+
        
   </div>
 </div>
@@ -78,13 +128,16 @@ if ($total-$uangMuka<=0){
     var lunasString="<?php echo $lunasString;?>";
     var nomStr="";
     
-    var sisa=formatted(1, total-uangMuka);
+    var sisa=total-uangMuka;
+    document.getElementById("total").value =formatted(4,total);
+    document.getElementById("uang_muka").value = formatted(3,uangMuka);
+    document.getElementById("sisa").value = formatted(2,sisa);
     document.getElementById("nota").value = nota;
     document.getElementById("lunas").innerHTML =lunasString;
     $(document).ready(function(){ 
         $("#trx").change(function() { 
             if ($("#trx").val()!="TUNAI") {
-                $("#nominal").val(sisa);
+                $("#nominal").val(formatted(1,sisa));
             } else {
                 $("#nominal").val("");
             }

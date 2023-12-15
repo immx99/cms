@@ -1,7 +1,12 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
+ 
 
-
+<!-- <style>
+table, th, td {
+  border: 1px solid;
+}
+</style> -->
 <?php
 error_reporting(0);
 include "configuration/config_etc.php";
@@ -49,7 +54,7 @@ date_default_timezone_set("Asia/Bangkok");
         
         $hasil1=mysqli_query($conn,$sql1);
         $row=mysqli_fetch_assoc($hasil1);
-        $tglmasuk=$row['tglmasuk'];
+        $tglmasuk=date_format(date_create($row['tglmasuk']), "d-M-Y");
         $jammasuk=date('H:i', strtotime($row['jammasuk']));
         $total=$row['total'];
         $terbilang=terbilang($total);
@@ -61,7 +66,7 @@ date_default_timezone_set("Asia/Bangkok");
         $rowPay=mysqli_fetch_assoc($hasilPay);
         $totalBayarLama= (int) $rowPay["bayar"];
         $totalBayarBaru= $totalBayarLama+(int) $nominal;
-        // echo "totalbayar=" . $totalBayar;
+       
         $sisa=$total-$totalBayarLama;
         $tgltransaksi=date('Y/m/d');
         $jamtransaksi=date('h:i:s');
@@ -84,14 +89,12 @@ date_default_timezone_set("Asia/Bangkok");
         if ($nominal !=0) {
               $pay=$nominal;
               $sisaPay=$total-$totalBayarLama-$pay;
-              echo "totalbayar= " . $totalBayarLama;
-              echo "sisa= " . $sisa;
+              
               if ($nominal>$sisa) {
                   $pay=$total-$totalBayarLama;
                   $sisaPay=$total-$totalBayarLama-$pay;
               }
-              echo "pay= " . $pay;
-              echo "sisapay= " . $sisaPay;
+              
               $payInsert="insert into pay_detail values (NULL,'$nota', '$namapelanggan', $total, $pay,
                   $sisaPay,'$pay_trx', '$tgltransaksi', '$jamtransaksi', '$kasir')";
                 
@@ -135,8 +138,8 @@ date_default_timezone_set("Asia/Bangkok");
             return terbilang($x / 1000000) . " juta" . terbilang($x % 1000000);
         }
         ?>
-        <table><tr><td width="60%" >
-        <div><img src="dist/upload/koplincah_kiri.png" style="max-width:50%;"  width="800" height="100"></div>
+        <table class="table-print-A4"><tr><td width="70%" >
+        <div><img src="dist/upload/koplincah_kiri.png" style="max-width:105%;"  width="1200" height="150"></div>
         </td><td>
         <table><tr><td width="50%" >Tgl Transaksi : <?php echo $tglmasuk;?> / <?php echo $jammasuk; ?></td></tr>
                <tr><td>Pelanggan : <b><?php echo $namapelanggan;?></b> / <?php echo $nohppelanggan; ?></td></tr>
@@ -151,28 +154,34 @@ date_default_timezone_set("Asia/Bangkok");
 
         <table class="table-print-A4">
         <tr class="spa">
-        <td width="5%"  style="width:20px;">&nbsp;</td>
-        <td width="20%" style="width:100px;">&nbsp;</td>
-        <td width="20%" style="width:100px;">&nbsp;</td>
-        <td width="20%"  style="width:100px;">&nbsp;</td>
-        <td width="10%"  style="width:50px;">&nbsp;</td>
-        <td width="25%"  style="width:100px;">&nbsp;</td>
-      
+        <td width="5%"  style="width:50px;">&nbsp;</td>
+        <td width="10%" style="width:200px;">&nbsp;</td>
+        <td width="10%" style="width:200px;">&nbsp;</td>
+        <td width="10%"  style="width:200px;">&nbsp;</td>
+        <td width="10%"  style="width:200px;">&nbsp;</td>
+        <td width="10%"  style="width:200px;">&nbsp;</td>
+        <td width="10%"  style="width:100px;">&nbsp;</td>
+        <td width="10%"  style="width:100px;">&nbsp;</td>
+        <td width="10%"  style="width:100px;">&nbsp;</td>
+        <td width="20%"  style="width:200px;">&nbsp;</td>
+        <td width="20%"  style="width:200px;">&nbsp;</td>
+        <td width="20%"  style="width:200px;">&nbsp;</td>
+        </tr>
         </tr>
         
         <tr >
-        	 <td style="width:192px;" colspan="6" align="left"><h2>No.Nota - <?php echo $nota;?></h2></td>
+        	 <td  colspan="12" align="left"><strong>NO. NOTA: <?php echo $nota;?></strong></td>
         </tr>
         
           
        
        <tr><td><strong>NO</strong></td>
-       <td colspan="2" style="width:50px;"><strong>KETERANGAN</strong></td>
-       <td ><strong> BANYAKNYA</strong> </td>
-       <td ><strong> HARGA SATUAN</strong> </td>
-       <td ><strong> JUMLAH BIAYA</strong> </td></tr>
+       <td  colspan="5" align="center"><strong>KETERANGAN</strong></td>
+       <td align="center"><strong> BANYAKNYA</strong> </td>
+       <td  align="center" colspan="2"><strong> HARGA SATUAN</strong> </td>
+       <td  align="center" colspan="3"><strong> JUMLAH BIAYA</strong> </td></tr>
        <tr class="siv solid">
-          	<td colspan="7" style="width:800px;">
+          	<td colspan="12" style="width:1500px;">
         	<div class="solid-border" ></div>
         </td>
           </tr>
@@ -184,12 +193,12 @@ date_default_timezone_set("Asia/Bangkok");
           $i=1;
           while ($fill = mysqli_fetch_assoc($hasil)){
               if (mysqli_real_escape_string($conn, $fill['nama'])!="Diskon") {
-                  echo '<tr><td>' .  $i . '. </td><td colspan="2" style="width:50px;">' . 
+                  echo '<tr><td>' .  $i . '. </td><td colspan="5" style="width:50px;" align="left">' . 
                         mysqli_real_escape_string($conn, $fill['nama']) . '</td>';
                
                   
-                  echo '<td style="width:50px;" align="right">' .  mysqli_real_escape_string($conn, $fill['jumlah'].$fill['satuan']) . '</td>';
-                  echo '<td  style="width:100px;" align="right"> ' . number_format(($fill["biaya"]), $decimal, $a_decimal, $thousand) . ',-' . '</td>';
+                  echo '<td style="width:50px;" align="center">' .  mysqli_real_escape_string($conn, $fill['jumlah'].$fill['satuan']) . '</td>';
+                  echo '<td  style="width:100px;" align="right" colspan="2" > ' . number_format(($fill["biaya"]), $decimal, $a_decimal, $thousand) . ',-' . '</td>';
               } else {
                   echo '<tr><td></td><td  style="width:200px;">' .  
                       mysqli_real_escape_string($conn, $fill['nama']) . '</td>';
@@ -198,11 +207,11 @@ date_default_timezone_set("Asia/Bangkok");
                  
               }
               
-              echo '<td style="width:62px;" colspan="2" align="right">' . number_format(($fill['hargaakhir']), $decimal, $a_decimal, $thousand).',- </td></tr>';
+              echo '<td style="width:100px;" colspan="3" align="right">' . number_format(($fill['hargaakhir']), $decimal, $a_decimal, $thousand).',- </td></tr>';
             
               ?>
             <tr class="siv">
-              <td colspan="7" style="width:1060px;">
+              <td colspan="12" >
             <div class="dotted-border"></div>	</td>
             <td style="width:12px;">	</td>
             </tr>
@@ -216,10 +225,10 @@ date_default_timezone_set("Asia/Bangkok");
 
         <tr>
           <td></td>
-        	<td colspan="2" style="width:76.8px;">Total Qty</td>
-          <td style="width:43.2px;"><?php echo $totalqty; ?></td>
-        	<td style="width:48px;" align="right"><b>TOTAL</b></td>
-        	<td style="width:72px;" colspan="2" align="right"><b><?php echo number_format($total, $decimal, $a_decimal, $thousand).',-';?></b></td>
+        	<td colspan="5" style="width:76.8px;" align="left">Total Qty</td>
+          <td style="width:43.2px;" align="center"><?php echo $totalqty; ?></td>
+        	<td colspan="2" style="width:48px;" align="right"><b>TOTAL</b></td>
+        	<td style="width:72px;" colspan="3" align="right"><b><?php echo number_format($total, $decimal, $a_decimal, $thousand).',-';?></b></td>
          </tr>
          <?php
           $sql4="select uang_muka from bayar where nota='$nota'";
@@ -237,34 +246,52 @@ date_default_timezone_set("Asia/Bangkok");
                   <td colspan="5" align="right"><?php echo $trx;?></td>
                   <td style="width:72px;" colspan="2" align="right"><?php echo number_format($nominal, $decimal, $a_decimal, $thousand).',-';?></td>
                 </tr>
-                <?php
-                if ($trx=="TUNAI"){
+                <?
+                if ($nominal !=0) {
+                  $update1="update bayar set uang_muka=" . $nominal . " where nota='$nota'";
+                  // echo  "u1=" . $update1;
+                  mysqli_query($conn, $update1);
+                }
+                // if ($trx=="TUNAI"){
+                // ?>
+                //     <tr>
+                      
+                //       <td colspan="5" align="right">KEMBALI</td>
+                //       <td style="width:72px;" colspan="2" align="right"><?php echo number_format($nominal-$total, $decimal, $a_decimal, $thousand).',-';?></td>
+                //     </tr>
+                // <?php
+                // }
+
+                    if ($trx=="TUNAI"){
                 ?>
                     <tr>
                       
-                      <td colspan="5" align="right">KEMBALI</td>
-                      <td style="width:72px;" colspan="2" align="right"><?php echo number_format($nominal-$total, $decimal, $a_decimal, $thousand).',-';?></td>
-                    </tr>
-                <?php
-                }
+                            <td colspan="9" align="right">KEMBALI</td>
+                            <td style="width:72px;" colspan="3" align="right"><?php echo number_format($nominal-$total, $decimal, $a_decimal, $thousand).',-';?></td>
+                          </tr>
+                      <?php
+                      }
+
+
               } else {
                 ?>
                   <tr>
                  
-                  <td  colspan="5"  align="right"><?php echo $trx . " UANG MUKA";?></td>
-                  <td style="width:72px;" colspan="2" align="right"><?php echo number_format($nominal, $decimal, $a_decimal, $thousand).',-';?></td>
+                  <td  colspan="9"  align="right"><?php echo $trx . " UANG MUKA";?></td>
+                  <td style="width:72px;" colspan="3" align="right"><?php echo number_format($nominal, $decimal, $a_decimal, $thousand).',-';?></td>
                 </tr>
                 <tr>
-                  <td></td>
-                  <td colspan="2" style="width:76.8px;"></td>
-                  <td style="width:43.2px;"></td>
-                  <td  style="width:48px;"  align="right">KEKURANGAN</td>
-                  <td style="width:72px;" colspan="2" align="right"><?php echo number_format($total-$nominal, $decimal, $a_decimal, $thousand).',-';?></td>
+                  
+                  
+                 
+                  <td colspan="9" style="width:48px;"  align="right">KEKURANGAN</td>
+                  <td style="width:72px;" colspan="3" align="right"><?php echo number_format($total-$nominal, $decimal, $a_decimal, $thousand).',-';?></td>
                 </tr>
 
               <?php
                 if ($nominal !=0) {
                       $update="update bayar set uang_muka=" . $nominal . " where nota='$nota'";
+                      // echo  "u=" . $update;
                       mysqli_query($conn, $update);
                 }
               }
@@ -273,31 +300,31 @@ date_default_timezone_set("Asia/Bangkok");
                 if ($nominal>=$sisa && $sisa >0) {
               ?>
                       <tr>
-                      <td></td>
-                      <td colspan="2" style="width:76.8px;"></td>
-                      <td style="width:43.2px;"></td>
+                     
+                      <td colspan="9" style="width:76.8px;"></td>
+    
                       <td  style="width:48px;" align="right">UANG MUKA</td>
-                      <td style="width:72px;" colspan="2" align="right"><?php echo number_format($uangMuka, $decimal, $a_decimal, $thousand).',-';?></td>
+                      <td style="width:72px;" colspan="3" align="right"><?php echo number_format($uangMuka, $decimal, $a_decimal, $thousand).',-';?></td>
                     </tr>
                     <tr>
             
-                      <td  colspan="5" style="width:48px;" align="right">KEKURANGAN SEBELUMNYA</td>
-                      <td style="width:72px;" colspan="2" align="right"><?php echo number_format($sisa, $decimal, $a_decimal, $thousand).',-';?></td>
+                      <td  colspan="9" style="width:48px;" align="right">KEKURANGAN SEBELUMNYA</td>
+                      <td style="width:72px;" colspan="3" align="right"><?php echo number_format($sisa, $decimal, $a_decimal, $thousand).',-';?></td>
                     </tr>
                     <tr>
                       
-                      <td  colspan="5" align="right"><?php echo $trx;?></td>
-                      <td style="width:72px;" colspan="2" align="right"><?php echo number_format($nominal, $decimal, $a_decimal, $thousand).',-';?></td>
+                      <td  colspan="9" align="right"><?php echo $trx;?></td>
+                      <td style="width:72px;" colspan="3" align="right"><?php echo number_format($nominal, $decimal, $a_decimal, $thousand).',-';?></td>
                     </tr>
                     <?php
                     if ($trx=="TUNAI"){
                         ?>
                         <tr>
-                          <td></td>
-                          <td colspan="2" style="width:76.8px;"></td>
-                          <td style="width:43.2px;"></td>
+                          
+                          <td colspan="9" style="width:76.8px;"></td>
+                  
                           <td  style="width:48px;" align="right">KEMBALI</td>
-                          <td style="width:72px;" colspan="2" align="right"><?php echo number_format($nominal-$sisa, $decimal, $a_decimal, $thousand).',-';?></td>
+                          <td style="width:72px;" colspan="3" align="right"><?php echo number_format($nominal-$sisa, $decimal, $a_decimal, $thousand).',-';?></td>
                         </tr>
 
 
@@ -307,6 +334,7 @@ date_default_timezone_set("Asia/Bangkok");
                     $sisa=0;
                   
                     $update3="update bayar set uang_muka=" . $uangMuka . " where nota='$nota'";
+                    // echo   "u3=" .$update3;
                     mysqli_query($conn, $update3);
 
                 } else {
@@ -315,33 +343,34 @@ date_default_timezone_set("Asia/Bangkok");
                           $uangMukaBaru=$uangMuka+$nominal;
                           $sisa=$total-$uangMuka;
                           $update2="update bayar set uang_muka=" . $uangMukaBaru . " where nota='$nota'";
+                          // echo "u2=" . $update2;
                           mysqli_query($conn, $update2);
                           ?>
                           <tr>
                         
-                          <td  colspan="5" align="right">UANG MUKA</td>
-                          <td style="width:72px;" colspan="2" align="right"><?php echo number_format($uangMuka, $decimal, $a_decimal, $thousand).',-';?></td>
+                          <td  colspan="9" align="right">UANG MUKA</td>
+                          <td style="width:72px;" colspan="3" align="right"><?php echo number_format($uangMuka, $decimal, $a_decimal, $thousand).',-';?></td>
                         </tr>
                         <tr>
                         
-                          <td   colspan="5" style="width:48px;" align="right">KEKURANGAN SEBELUMNYA</td>
-                          <td style="width:72px;" colspan="2" align="right"><?php echo number_format($sisa, $decimal, $a_decimal, $thousand).',-';?></td>
+                          <td   colspan="9" style="width:48px;" align="right">KEKURANGAN SEBELUMNYA</td>
+                          <td style="width:72px;" colspan="3" align="right"><?php echo number_format($sisa, $decimal, $a_decimal, $thousand).',-';?></td>
                         </tr>
                         <tr>
                         
-                        <td  colspan="5" align="right"><?php echo $trx . " TAMBAHAN UANG MUKA";?></td>
-                        <td style="width:72px;" colspan="2" align="right"><?php echo number_format($nominal, $decimal, $a_decimal, $thousand).',-';?></td>
+                        <td  colspan="9" align="right"><?php echo $trx . " TAMBAHAN UANG MUKA";?></td>
+                        <td style="width:72px;" colspan="3" align="right"><?php echo number_format($nominal, $decimal, $a_decimal, $thousand).',-';?></td>
                       </tr>
                       <tr>
-                          <td   colspan="5" style="width:48px;" align="right">KEKURANGAN</td>
-                          <td style="width:72px;" colspan="2" align="right"><?php echo number_format($total-$uangMukaBaru, $decimal, $a_decimal, $thousand).',-';?></td>
+                          <td   colspan="9" style="width:48px;" align="right">KEKURANGAN</td>
+                          <td style="width:72px;" colspan="3" align="right"><?php echo number_format($total-$uangMukaBaru, $decimal, $a_decimal, $thousand).',-';?></td>
                         </tr>
                     <?php
                     } else {
                        ?>
                         <tr>
-                          <td   colspan="5" style="width:48px;" align="right">LUNAS</td>
-                          <td style="width:72px;" colspan="2" align="right"></td>
+                          <td   colspan="9" style="width:48px;" align="right">LUNAS</td>
+                          <td style="width:72px;" colspan="3" align="right"></td>
                         </tr>
                         <?php
                     }
@@ -354,50 +383,52 @@ date_default_timezone_set("Asia/Bangkok");
 
 
            <tr class="siv solid">
-          	<td colspan="7" style="width:240px;">
+          	<td colspan="12" style="width:240px;">
         	<div class="solid-border" ></div>
         </td>
           </tr>
         <tr>
-        	<td style="width:237px;" colspan="6" align="left"><?php echo "Terbilang: " . $terbilang . " rupiah.";?></td>
+          <td></td>
+        	<td style="width:237px;" colspan="11" align="left"><?php echo "Terbilang: " . $terbilang . " rupiah.";?></td>
         </tr>
 
         <tr>
-        	<td style="width:237px;" colspan="7" align="right"><?php echo $kasir;?></td>
+        	<td style="width:237px;" colspan="11" align="right"><?php echo $kasir;?></td>
         </tr>
 
            <tr class="siv solid">
-          	<td colspan="7" style="width:240px;">
+          	<td colspan="12" style="width:240px;">
         	<div class="solid-border" ></div>
         </td>
           </tr>
 
         <tr>
-        	<td style="width:240px;" colspan="6"><pre  style="white-space: pre-line;">
+        	<td style="width:240px;" colspan="12"><pre  style="white-space: pre-line;">
           <?php echo $signature;?>
           <pre></td>
           </tr>
           <tr>
-            <td colspan="8">
-                <div><img src="dist/upload/koplincah_perhatian.png" style="max-width:80%;"  width="1500" height="50"></div>
+            <td colspan="9">
+                <div><img src="dist/upload/koplincah_perhatian.png" style="max-width:100%;"  width="1500" height="60"></div>
             </td>
-            <td>
+            <td colspan="3"  align="center">
                 Hormat Kami
             </td>
           </tr>
-          <tr>
-            <td colspan="8">
+          <tr >
+            <td colspan="9">
                 <div><img src="dist/upload/koplincah_tujuan.png" style="max-width:80%;"  width="1500" height="50"></div>
             </td>
-            <td>
+            <td colspan="3"  align="center">
                 ...............................
             </td>
           </tr>
-          <tr class="terakhir">
+          <!-- <tr class="terakhir">
         	<td style="width:240px;" colspan="6"></td>
-          </tr>
+          </tr> -->
         </table>
 
+   
 
         <script>
 
