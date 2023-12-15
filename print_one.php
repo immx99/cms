@@ -243,26 +243,18 @@ date_default_timezone_set("Asia/Bangkok");
                 ?>
                 <tr>
                   
-                  <td colspan="5" align="right"><?php echo $trx;?></td>
-                  <td style="width:72px;" colspan="2" align="right"><?php echo number_format($nominal, $decimal, $a_decimal, $thousand).',-';?></td>
+                  <td colspan="9" align="right"><?php echo $trx;?></td>
+                  <td style="width:72px;" colspan="3" align="right"><?php echo number_format($nominal, $decimal, $a_decimal, $thousand).',-';?></td>
                 </tr>
-                <?
+                <?php
                 if ($nominal !=0) {
                   $update1="update bayar set uang_muka=" . $nominal . " where nota='$nota'";
                   // echo  "u1=" . $update1;
                   mysqli_query($conn, $update1);
                 }
-                // if ($trx=="TUNAI"){
-                // ?>
-                //     <tr>
-                      
-                //       <td colspan="5" align="right">KEMBALI</td>
-                //       <td style="width:72px;" colspan="2" align="right"><?php echo number_format($nominal-$total, $decimal, $a_decimal, $thousand).',-';?></td>
-                //     </tr>
-                // <?php
-                // }
+                
 
-                    if ($trx=="TUNAI"){
+               if ($trx=="TUNAI"){
                 ?>
                     <tr>
                       
