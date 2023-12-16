@@ -138,7 +138,7 @@ date_default_timezone_set("Asia/Bangkok");
             return terbilang($x / 1000000) . " juta" . terbilang($x % 1000000);
         }
         ?>
-        <table class="table-print-A4"><tr><td width="70%" >
+        <table class="table-print-A5"><tr><td width="70%" >
         <div><img src="dist/upload/koplincah_kiri.png" style="max-width:105%;"  width="1200" height="150"></div>
         </td><td>
         <table><tr><td width="50%" >Tgl Transaksi : <?php echo $tglmasuk;?> / <?php echo $jammasuk; ?></td></tr>
@@ -152,7 +152,7 @@ date_default_timezone_set("Asia/Bangkok");
         <!-- </td></tr> -->
         </table>
 
-        <table class="table-print-A4">
+        <table class="table-print-A5">
         <tr class="spa">
         <td width="5%"  style="width:50px;">&nbsp;</td>
         <td width="10%" style="width:200px;">&nbsp;</td>
