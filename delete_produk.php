@@ -49,8 +49,35 @@ if($get == '1'){
 
   // $sisa=$row['sisa'];
 
+$sqlTrx="select fwd.jumlah as jumlah, fwd.satuan as satuan, st.jumlah_per_pack as jml_per_pak,
+st.jumlah as jml_stock, st.satuan as kode_satuan,
+st.jumlah_eceran as jml_eceran from $forward fwd, stock st where fwd.no='".$no."'" . "and st.kode=fwd.kode";
+$hasilTrx=mysqli_query($conn,$sqlTrx);
+$row=mysqli_fetch_assoc($hasilTrx);
+$jumlah=$row['jumlah'];
+$satuan=$row['satuan'];
+$kode=$row['kode'];
+$jmlStock=$row['jml_stock'];
+$jmlPerPak=$row['jml_per_pak'];
+$kodeSatuan=$row['kode_satuan'];
+$jmlEcerann=$row['jml_eceran'];
+switch ($satuan) {
+  case "Pak":
+     $newJmlStock=$jmlStock+$jumlah;
+     $newJmlEceran=$jmlEceran;
+    break;
+  case "Pcs":
+  case "Lembar":
+    $newJmlEceran=$jmlEceran+$jumlah;
+    if ($newJmlEceran>=$jmlPerPak) {
+      $newJmlStock=floor($newJmlEceran/$jmlPerPak);
+      $newJmlEceran=fmod($newJmlEceran,$jmlPerPak);
+    }
+    break; 
+}
 
-
+$updateStock="update stock set jumlah=$newJmlStock, jumlah_eceran=$newJmlEceran where kode='$kode'";
+$upStock = mysqli_query($conn, $updateStock);
 
 
  $sql = "delete from $forward where no='".$no."'";
@@ -86,15 +113,18 @@ $update = mysqli_query($conn, $sqlc3);
 
     $sqlc3 = "update bayar set status='batal' where nota='$kode'";
 
-$update = mysqli_query($conn, $sqlc3);
+    $update = mysqli_query($conn, $sqlc3);
+    if (strpos($forwardpage, "edit") !=-1) {
+      // $delBayar="delete from bayar where nota='$kode'";
+      // mysqli_query($conn,$delBayar);
+      // $method="get";
+      $updatePayDetail="delete from pay_detail set status='batal' where nota='$kode'";
+      mysqli_query($conn,$updatePayDetail);
+    } 
 
  }
 //  $method="post";
- if (strpos($forwardpage, "edit") !=-1) {
-    $delBayar="delete from bayar where nota='$kode'";
-    mysqli_query($conn,$delBayar);
-    // $method="get";
- } 
+ 
 
  ?>
 
