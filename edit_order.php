@@ -319,7 +319,7 @@ if ($chmod >= 2 || $_SESSION['jabatan'] == 'admin' || $_SESSION['jabatan'] == 'u
         ?>
         <script type="text/javascript">
         window.onload = function() {
-          var win = window.open('print_one.php?nota=<?php echo $kode;?>','Cetak',' menubar=0, resizable=0,dependent=0,status=0,width=500,height=400,left=10,top=10','_blank');
+          var win = window.open('tunai.php?nota=<?php echo $kode;?>','Cetak',' menubar=0, resizable=0,dependent=0,status=0,width=500,height=400,left=10,top=10','_blank');
         
         if (win) {
           alert('Berhasil, Data telah disimpan!');
