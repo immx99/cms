@@ -267,6 +267,12 @@ if($chmenu6 >= 1 || $_SESSION['jabatan'] == 'admin' || $_SESSION['jabatan'] == '
                     <a href="order_data"><i class="fa fa-circle-o"></i>Data Order</a>
 
                   </li>
+                  
+                  <li>
+
+                    <a href="edit_order_form"><i class="fa fa-circle-o"></i>Edit Order</a>
+
+                 </li>
 
                     <li>
 
