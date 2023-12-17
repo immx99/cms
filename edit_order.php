@@ -250,8 +250,48 @@ if ($chmod >= 2 || $_SESSION['jabatan'] == 'admin' || $_SESSION['jabatan'] == 'u
                       }
                   else if(($chmod >= 2 || $_SESSION['jabatan'] == 'admin' || $_SESSION['jabatan'] == 'user'  )&&($jumlah > 0)){
                       if ($nama!="Diskon") {
-                          $sql2 = "insert into $tabeldatabase (nota,kode,nama,biaya,satuan,jumlah,hargaakhir,biayaakhir,profitakhir) values( '$kode','$layanan','$nama',$biaya,'$satuan',$jumlah,$hargaakhir,$biayaakhir, $profitakhir)";
-                      } else {
+                                               
+                          $sqlTrx="select fwd.jumlah as jumlah, fwd.satuan as satuan, st.jumlah_per_pack as jml_per_pak,
+                          st.jumlah as jml_stock, st.satuan as kode_satuan,
+                          st.jumlah_eceran as jml_eceran from $tabeldatabase fwd, stock st where fwd.no='".$no."'" . "and st.kode=fwd.kode";
+                          $hasilTrx=mysqli_query($conn,$sqlTrx);
+                          $row=mysqli_fetch_assoc($hasilTrx);
+                          $jumlah=$row['jumlah'];
+                          $satuan=$row['satuan'];
+                          $kode=$row['kode'];
+                          $jmlStock=$row['jml_stock'];
+                          $jmlPerPak=$row['jml_per_pak'];
+                          $kodeSatuan=$row['kode_satuan'];
+                          $jmlEcerann=$row['jml_eceran'];
+                          switch ($satuan) {
+                            case "Pak":
+                              $newJmlStock=$jmlStock-$jumlah;
+                              $newJmlEceran=$jmlEceran;
+                              break;
+                            case "Pcs":
+                            case "Lembar":
+                              $newJmlEceran=$jmlEceran-$jumlah;
+                              if ($newJmlEceran>=$jmlPerPak) {
+                                $newJmlStock=floor($newJmlEceran/$jmlPerPak);
+                                $newJmlEceran=fmod($newJmlEceran,$jmlPerPak);
+                              }
+                              break; 
+                          }
+                          if ($newJmlEceran<0) {
+                             $newJmlStock--;
+                             $newJmlEceran=$jmlPerPak+$newJmlEceran;
+                          }
+                          if ($newJmlStock>=0) {
+                          
+                              $updateStock="update stock set jumlah=$newJmlStock, jumlah_eceran=$newJmlEceran where kode='$kode'";
+                              $upStock = mysqli_query($conn, $updateStock);
+                              
+                              $sql2 = "insert into $tabeldatabase (nota,kode,nama,biaya,satuan,jumlah,hargaakhir,biayaakhir,profitakhir) values( '$kode','$layanan','$nama',$biaya,'$satuan',$jumlah,$hargaakhir,$biayaakhir, $profitakhir)";
+                          } else {
+                            echo "<script type='text/javascript'> alert('Gagal, Jumlah barang di stock kurang!');</script>";
+                          }
+
+                        } else {
                           $sql2 = "insert into $tabeldatabase (nota,kode,nama,satuan,jumlah,hargaakhir,biayaakhir,profitakhir) values( '$kode','$layanan','$nama','$satuan',$jumlah,$hargaakhir,$biayaakhir, $hargaakhir)";
                       }
                       //  echo $sql2;

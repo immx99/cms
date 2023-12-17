@@ -258,9 +258,18 @@ if ($chmod >= 2 || $_SESSION['jabatan'] == 'admin' || $_SESSION['jabatan'] == 'u
                       }
                       break; 
                   }
-
-                  $updateStock="update stock set jumlah=$newJmlStock, jumlah_eceran=$newJmlEceran where kode='$kode'";
-                  $upStock = mysqli_query($conn, $updateStock);
+                  if ($newJmlEceran<0) {
+                    $newJmlStock--;
+                    $newJmlEceran=$jmlPerPak+$newJmlEceran;
+                 }
+                 if ($newJmlStock>=0) {
+                 
+                     $updateStock="update stock set jumlah=$newJmlStock, jumlah_eceran=$newJmlEceran where kode='$kode'";
+                     $upStock = mysqli_query($conn, $updateStock);
+                     $sql2 = "insert into $tabeldatabase (nota,kode,nama,biaya,satuan,jumlah,hargaakhir,biayaakhir,profitakhir) values( '$kode','$layanan','$nama',$biaya,'$satuan',$jumlah,$hargaakhir,$biayaakhir, $profitakhir)";
+                  } else {
+                    echo "<script type='text/javascript'> alert('Gagal, Jumlah barang di stock kurang!');</script>";
+                  }
                 
                 } else {
                   $sql2 = "insert into $tabeldatabase (nota,kode,nama,satuan,jumlah,hargaakhir,biayaakhir,profitakhir) values( '$kode','$layanan','$nama','$satuan',$jumlah,$hargaakhir,$biayaakhir, $hargaakhir)";
