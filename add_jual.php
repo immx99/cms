@@ -230,20 +230,19 @@ if ($chmod >= 2 || $_SESSION['jabatan'] == 'admin' || $_SESSION['jabatan'] == 'u
               }
           else if(($chmod >= 2 || $_SESSION['jabatan'] == 'admin' || $_SESSION['jabatan'] == 'user'  )&&($jumlah > 0)){
               if ($nama!="Diskon") {
-                  $sql2 = "insert into $tabeldatabase (nota,kode,nama,biaya,satuan,jumlah,hargaakhir,biayaakhir,profitakhir) values( '$kode','$layanan','$nama',$biaya,'$satuan',$jumlah,$hargaakhir,$biayaakhir, $profitakhir)";
                  
-                  $sqlTrx="select fwd.jumlah as jumlah, fwd.satuan as satuan, st.jumlah_per_pack as jml_per_pak,
-                  st.jumlah as jml_stock, st.satuan as kode_satuan,
-                  st.jumlah_eceran as jml_eceran from $tabeldatabase fwd, stock st where fwd.no='".$no."'" . "and st.kode=fwd.kode";
+                  // $sqlTrx="select jumlah_per_pack, jumlah, jumlah_eceran from stock stc, satuan s 
+                  // where stc.satuan=s.kode and s.nama='$satuan' and stc.kode='$layanan'";
+                  // echo "<br>satuan=" . $satuan;
+                  // echo "<br>kode=" . $kode;
+                  // echo "<br>layanan=" . $layanan;
+                  // echo $sqlTrx;
                   $hasilTrx=mysqli_query($conn,$sqlTrx);
                   $row=mysqli_fetch_assoc($hasilTrx);
-                  $jumlah=$row['jumlah'];
-                  $satuan=$row['satuan'];
-                  $kode=$row['kode'];
-                  $jmlStock=$row['jml_stock'];
-                  $jmlPerPak=$row['jml_per_pak'];
-                  $kodeSatuan=$row['kode_satuan'];
-                  $jmlEcerann=$row['jml_eceran'];
+                  $jmlStock=$row['jumlah'];
+                  $jmlPerPak=$row['jumlah_per_pack'];
+                  $jmlEceran=$row['jumlah_eceran'];
+                 
                   switch ($satuan) {
                     case "Pak":
                       $newJmlStock=$jmlStock-$jumlah;
@@ -251,7 +250,7 @@ if ($chmod >= 2 || $_SESSION['jabatan'] == 'admin' || $_SESSION['jabatan'] == 'u
                       break;
                     case "Pcs":
                     case "Lembar":
-                      $newJmlEceran=$jmlEceran-$jumlah;
+                      $newJmlEceran=$jmlEceran;
                       if ($newJmlEceran>=$jmlPerPak) {
                         $newJmlStock=floor($newJmlEceran/$jmlPerPak);
                         $newJmlEceran=fmod($newJmlEceran,$jmlPerPak);
@@ -262,19 +261,28 @@ if ($chmod >= 2 || $_SESSION['jabatan'] == 'admin' || $_SESSION['jabatan'] == 'u
                     $newJmlStock--;
                     $newJmlEceran=$jmlPerPak+$newJmlEceran;
                  }
-                 if ($newJmlStock>=0) {
-                 
-                     $updateStock="update stock set jumlah=$newJmlStock, jumlah_eceran=$newJmlEceran where kode='$kode'";
+
+                  // kontrol stock belum berlaku jika diberlakukan dibuka tanda remarknya di if ($newJmlStock>=0)
+                //  if ($newJmlStock>=0) {
+                      if ($jmlPerPak==1) {
+                        $newJmlEceran=$$newJmlStock;
+                      }
+                     $updateStock="update stock set jumlah=$newJmlStock, jumlah_eceran=$newJmlEceran where kode='$layanan'";
+                      echo $updateStock;
                      $upStock = mysqli_query($conn, $updateStock);
                      $sql2 = "insert into $tabeldatabase (nota,kode,nama,biaya,satuan,jumlah,hargaakhir,biayaakhir,profitakhir) values( '$kode','$layanan','$nama',$biaya,'$satuan',$jumlah,$hargaakhir,$biayaakhir, $profitakhir)";
-                  } else {
-                    echo "<script type='text/javascript'> alert('Gagal, Jumlah barang di stock kurang!');</script>";
-                  }
+                  // } else {
+                  //   echo "<script type='text/javascript'> alert('Gagal, Jumlah barang di stock kurang!');</script>";
+                  // }
                 
                 } else {
                   $sql2 = "insert into $tabeldatabase (nota,kode,nama,satuan,jumlah,hargaakhir,biayaakhir,profitakhir) values( '$kode','$layanan','$nama','$satuan',$jumlah,$hargaakhir,$biayaakhir, $hargaakhir)";
                   
-              }
+                }
+
+
+               
+
               //  echo $sql2;
                $insertan = mysqli_query($conn, $sql2);
              }else{

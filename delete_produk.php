@@ -50,13 +50,13 @@ if($get == '1'){
   // $sisa=$row['sisa'];
 
 $sqlTrx="select fwd.jumlah as jumlah, fwd.satuan as satuan, st.jumlah_per_pack as jml_per_pak,
-st.jumlah as jml_stock, st.satuan as kode_satuan,
+st.jumlah as jml_stock, st.satuan as kode_satuan, fwd.kode as layanan,
 st.jumlah_eceran as jml_eceran from $forward fwd, stock st where fwd.no='".$no."'" . "and st.kode=fwd.kode";
 $hasilTrx=mysqli_query($conn,$sqlTrx);
 $row=mysqli_fetch_assoc($hasilTrx);
 $jumlah=$row['jumlah'];
 $satuan=$row['satuan'];
-$kode=$row['kode'];
+$layanan=$row['layanan'];
 $jmlStock=$row['jml_stock'];
 $jmlPerPak=$row['jml_per_pak'];
 $kodeSatuan=$row['kode_satuan'];
@@ -75,8 +75,10 @@ switch ($satuan) {
     }
     break; 
 }
-
-$updateStock="update stock set jumlah=$newJmlStock, jumlah_eceran=$newJmlEceran where kode='$kode'";
+if ($jmlPerPak==1) {
+  $newJmlEceran=$newJmlStock;
+}
+$updateStock="update stock set jumlah=$newJmlStock, jumlah_eceran=$newJmlEceran where kode='$layanan'";
 $upStock = mysqli_query($conn, $updateStock);
 
 
